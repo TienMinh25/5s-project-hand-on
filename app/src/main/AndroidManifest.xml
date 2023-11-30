@@ -12,6 +12,27 @@
         android:supportsRtl="true"
         android:theme="@style/Theme._5sprojecthandon"
         tools:targetApi="31">
+
+        <activity
+            android:name=".SignInActivity"
+            android:label="Đăng Nhập"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".AdminSignUpActivity"
+            android:label="Đăng Ký"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
         <activity
             android:name=".MainActivity"
             android:exported="true">
