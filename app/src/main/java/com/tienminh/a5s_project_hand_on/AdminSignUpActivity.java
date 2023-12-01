@@ -60,7 +60,7 @@ public class AdminSignUpActivity extends AppCompatActivity {
                 }
 
                 // Thêm dữ liệu vào database
-                if(!db.insertData(fullName, position, username, password, email, Integer.parseInt(phone))) {
+                if(!db.insertData(fullName, position, username, password, email, phone)) {
                     Toast.makeText(AdminSignUpActivity.this, "Thêm dữ liệu thất bại!", Toast.LENGTH_SHORT).show();
                 }
                 else {
@@ -84,8 +84,8 @@ public class AdminSignUpActivity extends AppCompatActivity {
 
                         // Xóa saved session nếu có
 
-                        Intent intent = new Intent(AdminSignUpActivity.this, SignInActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        Intent intent = new Intent(AdminSignUpActivity.this, SignInActivity.class); // Tạo intent để mở SignInActivity
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // Xóa hết các activity trước đó
                         startActivity(intent);
                     }
                 });

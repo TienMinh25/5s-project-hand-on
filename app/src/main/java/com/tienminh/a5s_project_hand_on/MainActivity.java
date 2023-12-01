@@ -1,5 +1,7 @@
 package com.tienminh.a5s_project_hand_on;
 
+import static com.tienminh.a5s_project_hand_on.database.DatabaseHelper.TB_NGUOIDUNG_TENDANGNHAP;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
@@ -18,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
         databaseHelper = new DatabaseHelper(this);
 
         // Lấy tên người dùng từ cơ sở dữ liệu
-        String userName = databaseHelper.getUserName("ten_dang_nhap_cua_nguoi_dung");
+        String userName = databaseHelper.getUserName(TB_NGUOIDUNG_TENDANGNHAP);
 
         // Tìm TextView trong layout
         TextView welcomeMessageTextView = findViewById(R.id.txt_welcome);

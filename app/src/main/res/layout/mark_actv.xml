@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:src="@drawable/login_image"/>
+
+    </LinearLayout>
+
+    <!-- Nút back -->
+    <TextView
+        android:id="@+id/TieuDeChamDiem"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="CHẤM ĐIỂM"
+        android:textSize="18sp"
+        />
+
+    <Button
+        android:id="@+id/btnBack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Back"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:onClick="onBackButtonClick"/>
+
+    <!-- Danh sách khu vực -->
+    <LinearLayout
+        android:id="@+id/llAreas"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btnBack"
+        android:orientation="vertical"
+        android:layout_marginTop="16dp">
+
+        <!-- Khu vực Văn phòng -->
+        <Button
+            android:id="@+id/btnOffice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="KHU VỰC VĂN PHÒNG"
+            android:onClick="onAreaButtonClick"/>
+
+        <!-- Khu vực Giảng đường -->
+        <Button
+            android:id="@+id/btnLectureHall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="KHU VỰC GIẢNG ĐƯỜNG"
+            android:onClick="onAreaButtonClick"/>
+
+        <!-- Khu vực Phòng/Xưởng Thực hành -->
+        <Button
+            android:id="@+id/btnLab"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="KHU VỰC PHÒNG/XƯỞNG THỰC HÀNH"
+            android:onClick="onAreaButtonClick"/>
+
+        <!-- Khu vực Chung -->
+        <Button
+            android:id="@+id/btnCommon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="KHU VỰC CHUNG"
+            android:onClick="onAreaButtonClick"/>
+    </LinearLayout>
+</LinearLayout>
