@@ -16,14 +16,13 @@ public class AdminSignUpActivity extends AppCompatActivity {
     EditText edtFullName, edtPosition, edtUsername, edtPassword, edtRetypePassword, edtEmail, edtPhone;
     Button btnRegister;
     Button btnLogout;
-    DatabaseHelper db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.admin_signup_actv);
 
-        db = new DatabaseHelper(this);
+        // tao ket noi o day
 
         edtFullName = findViewById(R.id.full_name);
         edtPosition = findViewById(R.id.position);
@@ -41,7 +40,6 @@ public class AdminSignUpActivity extends AppCompatActivity {
 
                 // Lấy dữ liệu
                 String fullName = edtFullName.getText().toString();
-                String position = edtPosition.getText().toString();
                 String username = edtUsername.getText().toString();
                 String password = edtPassword.getText().toString();
                 String repassword = edtRetypePassword.getText().toString();
@@ -49,60 +47,52 @@ public class AdminSignUpActivity extends AppCompatActivity {
                 String phone = edtPhone.getText().toString();
 
                 // Validate dữ liệu
-                if(!validateInput(fullName, position, username, password, repassword, email, phone)) {
+                if(!validateInput(fullName, username, password, repassword, email, phone)) {
                     return;
                 }
 
                 // Kiểm tra tên đăng nhập
-                if(!db.checkTENDANGNHAP(username)) {
-                    Toast.makeText(AdminSignUpActivity.this, "Tên đăng nhập đã tồn tại!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
+//                if (!DatabaseHelper.checkExistUser(username)) {
+//                    Toast.makeText(AdminSignUpActivity.this, "Tên đăng nhập đã tồn tại!", Toast.LENGTH_SHORT).show();
+//                    return;
+//                }
+//
+//                // Thêm dữ liệu vào database
+//                if (DatabaseHelper.insertData(fullName, email, password, username, phone)) {
+//                    Toast.makeText(AdminSignUpActivity.this, "Đăng ký thành công!", Toast.LENGTH_SHORT).show();
+//                    // Clear text trong các edittext
+//                    edtFullName.setText("");
+//                    edtPosition.setText("");
+//                    edtUsername.setText("");
+//                    edtPassword.setText("");
+//                    edtRetypePassword.setText("");
+//                    edtEmail.setText("");
+//                    edtPhone.setText("");
+//                }
+//                else {
+//                    Toast.makeText(AdminSignUpActivity.this, "Thêm dữ liệu thất bại!", Toast.LENGTH_SHORT).show();
+//                }
+            }
+        });
 
-                // Thêm dữ liệu vào database
-                if(!db.insertData(fullName, position, username, password, email, phone)) {
-                    Toast.makeText(AdminSignUpActivity.this, "Thêm dữ liệu thất bại!", Toast.LENGTH_SHORT).show();
-                }
-                else {
-                    Toast.makeText(AdminSignUpActivity.this, "Đăng ký thành công!", Toast.LENGTH_SHORT).show();
-                    // Clear text trong các edittext
-                    edtFullName.setText("");
-                    edtPosition.setText("");
-                    edtUsername.setText("");
-                    edtPassword.setText("");
-                    edtRetypePassword.setText("");
-                    edtEmail.setText("");
-                    edtPhone.setText("");
-                }
+        //Xử lý nút logout
+        btnLogout = findViewById(R.id.button_logout);
 
-                //Xử lý nút logout
-                btnLogout = findViewById(R.id.button_logout);
-
-                btnLogout.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-
-                        // Xóa saved session nếu có
-
-                        Intent intent = new Intent(AdminSignUpActivity.this, SignInActivity.class); // Tạo intent để mở SignInActivity
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // Xóa hết các activity trước đó
-                        startActivity(intent);
-                    }
-                });
-
+        btnLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Xóa saved session nếu có
+                Intent intent = new Intent(AdminSignUpActivity.this, SignInActivity.class); // Tạo intent để mở SignInActivity
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // Xóa hết các activity trước đó
+                startActivity(intent);
             }
         });
     }
 
-    boolean validateInput(String fullName, String position, String username, String password, String repassword, String email, String phone) {
+    boolean validateInput(String fullName, String username, String password, String repassword, String email, String phone) {
 
         if(fullName.isEmpty()) {
             edtFullName.setError("Vui lòng nhập họ tên");
-            return false;
-        }
-
-        if(position.isEmpty()) {
-            edtPosition.setError("Vui lòng nhập chức vụ");
             return false;
         }
 
