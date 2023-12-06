@@ -42,7 +42,6 @@ public class SignInActivity extends AppCompatActivity {
                     @Override
                     public void onTaskComplete(String result) {
                         if (result != null) {
-                            Log.d("END", "cnt");
                             startActivity(new Intent(SignInActivity.this, AdminSignUpActivity.class));
                             finish();
                         }
