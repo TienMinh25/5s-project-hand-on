@@ -3,106 +3,268 @@ package com.tienminh.a5s_project_hand_on.database;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.AsyncTask;
+import android.util.Log;
 
-import androidx.annotation.Nullable;
+import com.tienminh.a5s_project_hand_on.classes.User;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
-
-    SQLiteDatabase db;
-
-    public static final String TB_NGUOIDUNG = "NGUOIDUNG"; // Tên bảng 1
-
-    public static final String TB_NGUOIDUNG_ID = "ID";  // Tên cột 1
-    public static final String TB_NGUOIDUNG_HOTEN = "HOTEN"; // Tên cột 2
-    public static final String TB_NGUOIDUNG_CHUCVU = "CHUCVU"; // Tên cột 3
-    public static final String TB_NGUOIDUNG_TENDANGNHAP = "TENDANGNHAP"; // Tên cột 4
-    public static final String TB_NGUOIDUNG_MATKHAU = "MATKHAU"; // Tên cột 5
-    public static final String TB_NGUOIDUNG_EMAIL = "EMAIL"; // Tên cột 6
-    public static final String TB_NGUOIDUNG_SDT = "SDT"; // Tên cột 7
-    private static final String DATABASE_NAME = "5S-Project";
+    private static final String DATABASE_NAME = "dbAppAndroid.db";
     private static final int DATABASE_VERSION = 1;
+    private static final String INITIALIZE_SCRIPT_NAME = "initialize.sqlite";
 
-    public DatabaseHelper(@Nullable Context context) {
+    private Context context;
+
+    public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        this.context = context;
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String tbNGUOIDUNG = "CREATE TABLE " + TB_NGUOIDUNG + " (" +      // Câu lệnh tạo bảng
-                TB_NGUOIDUNG_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                TB_NGUOIDUNG_HOTEN + " TEXT, " +
-                TB_NGUOIDUNG_CHUCVU + " TEXT, " +
-                TB_NGUOIDUNG_TENDANGNHAP + " TEXT, " +
-                TB_NGUOIDUNG_MATKHAU + " TEXT, " +
-                TB_NGUOIDUNG_EMAIL + " TEXT, " +
-                TB_NGUOIDUNG_SDT + " TEXT)";
+        // Thực hiện tạo bảng và thêm dữ liệu ban đầu
+        // Thực hiện tạo bảng người dùng
+        db.execSQL("CREATE TABLE IF NOT EXISTS users (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "fullname VARCHAR(50) NOT NULL," +
+                "username VARCHAR(50) NOT NULL," +
+                "password VARCHAR(50) NOT NULL," +
+                "email VARCHAR(50) NOT NULL," +
+                "phone VARCHAR(50)," +
+                "is_admin INTEGER NOT NULL);"
+        );
 
-        db.execSQL(tbNGUOIDUNG); // Thực thi câu lệnh tạo bảng
+        // Thực hiện tạo bảng khu vực
+        db.execSQL("CREATE TABLE IF NOT EXISTS areas (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "name VARCHAR(50) NOT NULL);"
+        );
+
+
+        db.execSQL("CREATE TABLE IF NOT EXISTS rooms (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "name VARCHAR(50) NOT NULL," +
+                "location VARCHAR(50) NOT NULL," +
+                "area_id INTEGER REFERENCES areas(id) ON UPDATE CASCADE ON DELETE CASCADE);"
+        );
+
+        db.execSQL("CREATE TABLE IF NOT EXISTS criteria ("+
+                "id INTEGER PRIMARY KEY AUTOINCREMENT,"+
+                "name VARCHAR(50) NOT NULL);"
+        );
+
+        db.execSQL("CREATE TABLE IF NOT EXISTS descriptions (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "content VARCHAR(100) NOT NULL," +
+                "criterion_id INTEGER REFERENCES criteria(id) ON UPDATE CASCADE ON DELETE CASCADE);"
+        );
+
+        db.execSQL("CREATE TABLE IF NOT EXISTS scores (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "user_id INTEGER REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE," +
+                "room_id INTEGER REFERENCES rooms(id) ON UPDATE CASCADE ON DELETE CASCADE," +
+                "description_id INTEGER REFERENCES descriptions(id) ON UPDATE CASCADE ON DELETE CASCADE," +
+                "score INTEGER CHECK (score >= 0 AND score <= 4));"
+        );
+
+        db.execSQL("INSERT OR IGNORE INTO users(fullname, username, password, email, phone, is_admin)" +
+                "VALUES ('admin', 'admin', 'admin', 'admin@admin.com', '0000.000.000', 1);"
+        );
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS NGUOIDUNG"); // Xóa bảng nếu tồn tại
-        onCreate(db); // Tạo lại bảng
+        // Xử lý cập nhật database nếu cần
     }
 
-    public SQLiteDatabase open(){
-        return this.getWritableDatabase(); // Mở kết nối đến database
-    }
+    // Async Task kiểm tra đăng ký
+    public static class ExecuteQueryTaskCheckUserExists<T> extends AsyncTask<Void, Void, T> {
+        private User user;
+        private DatabaseCallback<T> callback;
+        private Context context;
 
-    public boolean insertData(String hoten, String chucvu, String tendangnhap, String matkhau, String email, String sdt){
-        open(); // Mở kết nối đến database
-        ContentValues values = new ContentValues(); // Tạo đối tượng ContentValues để chứa dữ liệu
-        values.put(TB_NGUOIDUNG_HOTEN, hoten); // Đưa dữ liệu vào cột 1
-        values.put(TB_NGUOIDUNG_CHUCVU, chucvu); // Đưa dữ liệu vào cột 2
-        values.put(TB_NGUOIDUNG_TENDANGNHAP, tendangnhap); // Đưa dữ liệu vào cột 3
-        values.put(TB_NGUOIDUNG_MATKHAU, matkhau); // Đưa dữ liệu vào cột 4
-        values.put(TB_NGUOIDUNG_EMAIL, email); // Đưa dữ liệu vào cột 5
-        values.put(TB_NGUOIDUNG_SDT, sdt); // Đưa dữ liệu vào cột 6
-        long result = db.insert(TB_NGUOIDUNG, null, values); // Thực hiện câu lệnh insert dữ liệu vào bảng
-
-        if (result == -1) return false; // Nếu kết quả trả về -1 thì thêm thất bại
-        else return true; // Ngược lại thêm thành công
-    }
-
-    public boolean checkTENDANGNHAP(String tendangnhap){
-        open(); // Mở kết nối đến database
-        String query = "SELECT * FROM " + TB_NGUOIDUNG + " WHERE " + TB_NGUOIDUNG_TENDANGNHAP + " = '" + tendangnhap + "'"; // Câu lệnh truy vấn
-        Cursor cursor = db.rawQuery(query, null); // Thực hiện câu lệnh truy vấn và lưu kết quả vào đối tượng Cursor
-        if (cursor.getCount() > 0) return false; // Nếu có kết quả trả về thì trả về false
-        else return true; // Ngược lại trả về true
-    }
-
-    public boolean checkMATKHAU(String tendangnhap, String matkhau){
-        open(); // Mở kết nối đến database
-        String query = "SELECT * FROM " + TB_NGUOIDUNG + " WHERE " + TB_NGUOIDUNG_TENDANGNHAP + " = '" + tendangnhap + "' AND " + TB_NGUOIDUNG_MATKHAU + " = '" + matkhau + "'"; // Câu lệnh truy vấn
-        Cursor cursor = db.rawQuery(query, null); // Thực hiện câu lệnh truy vấn và lưu kết quả vào đối tượng Cursor
-        if (cursor.getCount() > 0) return true; // Nếu có kết quả trả về thì trả về true
-        else return false; // Ngược lại trả về false
-    }
-
-    //Lấy tên người dùng từ cơ sở dữ liệu
-    public String getUserName(String username) {
-        open();
-        String query = "SELECT " + TB_NGUOIDUNG_HOTEN + " FROM " + TB_NGUOIDUNG +
-                " WHERE " + TB_NGUOIDUNG_TENDANGNHAP + " = ?";
-
-        Cursor cursor = db.rawQuery(query, new String[]{username});
-
-        String userName = "";
-
-        if (cursor != null && cursor.moveToFirst()) {
-            int columnIndex = cursor.getColumnIndex(TB_NGUOIDUNG_HOTEN);
-            if (columnIndex != -1) {
-                userName = cursor.getString(columnIndex);
-            }
-            cursor.close();
+        public ExecuteQueryTaskCheckUserExists(DatabaseCallback<T> callback, Context context, User user) {
+            this.user = user;
+            this.callback = callback;
+            this.context = context;
         }
 
-        db.close();
+        @Override
+        protected T doInBackground(Void... params) {
+            SQLiteDatabase db = null;
+            try {
+                db = SQLiteDatabase.openDatabase(context.getDatabasePath(DATABASE_NAME).getPath(), null, SQLiteDatabase.OPEN_READWRITE);
 
-        return userName;
+                String[] projection = { "fullname", "username", "password", "email", "phone", "is_admin" };
+                String selection = "username = ? AND is_admin = ?";
+                String[] selectionArgs = { user.getUsername(), String.valueOf(user.getIs_admin()) };
+
+                try (Cursor cursor = db.query("users", projection, selection, selectionArgs, null, null, null)) {
+                    if (cursor != null) {
+                        boolean newCheck = (cursor.getCount() != 0);
+                        Boolean checkAdminExists = new Boolean(newCheck);
+                        return (T)checkAdminExists;
+                    }
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                if (db != null && db.isOpen()) {
+                    db.close();
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(T result) {
+            callback.onTaskComplete(result);
+        }
+    }
+
+
+    // AsyncTask để thực hiện kiểm tra thông tin đăng nhập
+    public static class ExecuteQueryTaskCheckUserSignIn<T> extends AsyncTask<Void, Void, T> {
+        private User user;
+        private DatabaseCallback<T> callback;
+        private Context context;
+
+        // truyen username, password duoi dang mang String[] parameters
+        public ExecuteQueryTaskCheckUserSignIn(DatabaseCallback<T> callback, Context context, User user) {
+            this.user = user;
+            this.callback = callback;
+            this.context = context;
+        }
+
+        @Override
+        protected T doInBackground(Void... params) {
+            SQLiteDatabase db = null;
+            try {
+                db = SQLiteDatabase.openDatabase(context.getDatabasePath(DATABASE_NAME).getPath(), null, SQLiteDatabase.OPEN_READWRITE);
+
+                String[] projection = { "fullname", "username", "password", "email", "phone", "is_admin" };
+                String selection = "username = ? AND password = ? AND is_admin = ?";
+                String[] selectionArgs = { user.getUsername(), user.getPassword(), String.valueOf(user.getIs_admin()) };
+
+                try (Cursor cursor = db.query("users", projection, selection, selectionArgs, null, null, null)) {
+                    if (cursor != null && cursor.moveToFirst()) {
+                        User newUser = new User(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getInt(5));
+                        return (T) newUser;
+                    }
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                if (db != null && db.isOpen()) {
+                    db.close();
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(T result) {
+            callback.onTaskComplete(result);
+        }
+    }
+
+    // AsyncTask check admin
+    public static class ExecuteQueryCheckAdmin<T> extends AsyncTask<Void, Void, T> {
+        private User user;
+        private DatabaseCallback<T> callback;
+        private Context context;
+
+        // truyen username, password vao check admin
+        public ExecuteQueryCheckAdmin(DatabaseCallback<T> callback, Context context, User user) {
+            this.user = user;
+            this.callback = callback;
+            this.context = context;
+        }
+
+        @Override
+        protected T doInBackground(Void... params) {
+            SQLiteDatabase db = null;
+            try {
+                db = SQLiteDatabase.openDatabase(context.getDatabasePath(DATABASE_NAME).getPath(), null, SQLiteDatabase.OPEN_READWRITE);
+
+                String[] projection = { "fullname", "username", "password", "email", "phone", "is_admin" };
+                String selection = "username = ? AND password = ? AND is_admin = ?";
+                String[] selectionArgs = { user.getUsername(), user.getPassword(), String.valueOf(user.getIs_admin()) };
+
+                try (Cursor cursor = db.query("users", projection, selection, selectionArgs, null, null, null)) {
+                    if (cursor != null) {
+                        boolean newCheck = (cursor.getCount() != 0);
+                        Boolean checkAdminExists = new Boolean(newCheck);
+                        return (T)checkAdminExists;
+                    }
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                if (db != null && db.isOpen()) {
+                    db.close();
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(T result) {
+            callback.onTaskComplete(result);
+        }
+    }
+
+    // Async Task đăng ký user
+    public static class ExecuteQueryInsertUser<T> extends AsyncTask<Void, Void, T> {
+        private User user;
+        private DatabaseCallback<T> callback;
+        private Context context;
+
+        // truyen username, password vao check admin
+        public ExecuteQueryInsertUser(DatabaseCallback<T> callback, Context context, User user) {
+            this.user = user;
+            this.callback = callback;
+            this.context = context;
+        }
+
+        @Override
+        protected T doInBackground(Void... params) {
+            SQLiteDatabase db = null;
+            try {
+                db = SQLiteDatabase.openDatabase(context.getDatabasePath(DATABASE_NAME).getPath(), null, SQLiteDatabase.OPEN_READWRITE);
+
+                ContentValues values = new ContentValues();
+                values.put("fullname", user.getFullname());
+                values.put("username", user.getUsername());
+                values.put("password", user.getPassword());
+                values.put("email", user.getEmail());
+                values.put("phone", user.getPhone());
+                values.put("is_admin", user.getIs_admin());
+
+                Log.d("INSERT", "INSERT");
+                long newRowId = db.insert("users", null, values);
+                if (newRowId != -1) {
+                    return (T)new Boolean(true);
+                }
+                else {
+                    return (T)new Boolean(false);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                if (db != null && db.isOpen()) {
+                    db.close();
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(T result) {
+            callback.onTaskComplete(result);
+        }
     }
 }

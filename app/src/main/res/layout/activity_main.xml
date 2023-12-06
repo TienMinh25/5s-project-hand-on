@@ -16,15 +16,35 @@
             android:layout_height="100dp"
             android:src="@drawable/login_image"/>
 
-        <TextView
-            android:id="@+id/txt_welcome"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Xin chào, "
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:gravity="left"
-            android:textColor="@color/purple_500"/>
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txt_welcome"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
+                android:gravity="left"
+                android:text="Xin chào, "
+                android:textColor="@color/purple_500"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btnLogout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="0dp"
+                android:background="@drawable/rounded_button"
+                android:gravity="center"
+                android:layout_margin="5dp"
+                android:text="Đăng xuất" />
+        </RelativeLayout>
 
     </LinearLayout>
 
@@ -85,7 +105,8 @@
             android:background="@drawable/rounded_button"
             android:text="HỖ TRỢ"
             android:textColor="@android:color/white"
-            android:gravity="center"/>
+            android:gravity="center"
+            />
     </GridLayout>
 
     <TextView
