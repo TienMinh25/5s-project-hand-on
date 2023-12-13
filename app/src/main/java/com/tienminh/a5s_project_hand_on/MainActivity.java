@@ -3,7 +3,9 @@ package com.tienminh.a5s_project_hand_on;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -12,6 +14,12 @@ import com.tienminh.a5s_project_hand_on.database.DatabaseHelper;
 
 public class MainActivity extends AppCompatActivity {
     Button btnLogout;
+    Button btnChamDiem;
+    Button btnTrangChu;
+    Button btnHoTro;
+    Button btnBaoCao;
+    TextView welcomeMessageTextView;
+    String fullName = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,20 +27,22 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         btnLogout = findViewById(R.id.btnLogout);
-
+        btnChamDiem = findViewById(R.id.btnChamDiem);
+        btnTrangChu = findViewById(R.id.trangChu);
+        btnHoTro = findViewById(R.id.hoTro);
+        btnBaoCao = findViewById(R.id.btnBaoCao);
 
         // Lấy tên người dùng từ cơ sở dữ liệu
 //        TB_NGUOI_DUNG_TENDANGNHAP thay bang bien username duoc truyen thong qua intent khi dang nhap
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
-        String fullName = "";
 
         if (bundle != null) {
             fullName = bundle.getString("fullname");
         }
 
         // Tìm TextView trong layout
-        TextView welcomeMessageTextView = findViewById(R.id.txt_welcome);
+        welcomeMessageTextView = findViewById(R.id.txt_welcome);
 
         // Tạo đoạn chào mừng và cập nhật TextView
         String welcomeMessage = "Xin chào, " + fullName;
@@ -46,5 +56,48 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        btnChamDiem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, MarkActivity.class); // Tạo intent để mở SignInActivity
+                startActivity(intent);
+            }
+        });
+
+        btnTrangChu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Uri webpage = Uri.parse("https://www.haui.edu.vn/vn");
+                Intent intent = new Intent(Intent.ACTION_VIEW, webpage);
+                startActivity(intent);
+            }
+        });
+
+        btnHoTro.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Uri webpage = Uri.parse("https://www.haui.edu.vn/vn/page/chuongtrinh5s");
+                Intent intent = new Intent(Intent.ACTION_VIEW, webpage);
+                startActivity(intent);
+            }
+        });
+
+        btnBaoCao.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, BaoCaoActivity.class));
+            }
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        String welcomeMessage = "Xin chào, " + fullName;
+        Log.d("TEST", welcomeMessage);
+
+        welcomeMessageTextView.setText(welcomeMessage);
     }
 }

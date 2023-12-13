@@ -61,6 +61,7 @@
 
         <!-- Button 1 (TRANG CHỦ) -->
         <Button
+            android:id="@+id/trangChu"
             android:layout_width="0dp"
             android:layout_height="140dp"
             android:layout_rowWeight="1"
@@ -73,6 +74,7 @@
 
         <!-- Button 2 (CHẤM ĐIỂM) -->
         <Button
+            android:id="@+id/btnChamDiem"
             android:layout_width="0dp"
             android:layout_height="140dp"
             android:layout_columnWeight="1"
@@ -85,6 +87,7 @@
 
         <!-- Button 3 (BÁO CÁO) -->
         <Button
+            android:id="@+id/btnBaoCao"
             android:layout_width="0dp"
             android:layout_height="140dp"
             android:layout_columnWeight="1"
@@ -97,6 +100,7 @@
 
         <!-- Button 4 (HỖ TRỢ) -->
         <Button
+            android:id="@+id/hoTro"
             android:layout_width="0dp"
             android:layout_height="140dp"
             android:layout_columnWeight="1"
