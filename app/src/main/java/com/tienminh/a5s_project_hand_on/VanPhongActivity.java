@@ -46,6 +46,7 @@ public class VanPhongActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerViewRooms);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+
         Intent intent = getIntent();
         if (intent != null && intent.getExtras() != null) {
             // Lấy Bundle từ Intent
