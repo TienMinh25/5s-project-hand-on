@@ -82,8 +82,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         db.execSQL("INSERT OR IGNORE INTO descriptions(title, content)"+
                 "VALUES('Nền sàn', 'Có sạch sẽ và được giữ gìn tốt không? Có rác trên sàn không')," +
-                "('Thùng rác', 'Có sạch sẽ và đặt ở vị trí hợp lý không?');"
-        );
+                "('Thùng rác', 'Có sạch sẽ và đặt ở vị trí hợp lý không?')," +
+                "('Thùng gạt tàn', 'Có sạch sẽ và đặt ở vị trí hợp lý không?')," +
+                "('Tường', 'Có sạch sẽ và được giữ gìn tốt không?')," +
+                "('Cửa sổ', 'Có sạch sẽ và được giữ gìn tốt không?')," +
+                "('Trần', 'Có sạch sẽ và được giữ gìn tốt không? Có bụi hoặc mạng nhện không?')," +
+                "('Đèn', 'Có sạch sẽ, an toàn và được bố trí hợp lý không? Còn sử dụng tốt hay không?')," +
+                "('Góc hành lang', 'Có rác hoặc đồ vật nào không cần thiết không');"
+                  );
     }
 
     @Override
