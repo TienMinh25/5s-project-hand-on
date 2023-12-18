@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Your existing layout goes here -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:src="@drawable/login_image"/>
+
+    <TextView
+        android:id="@+id/room"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/logo"
+        android:text=" VĂN PHÒNG SỐ:  "
+        android:textSize="18sp"
+        />
+    <!-- Tiêu chí Nền sàn -->
+    <TextView
+        android:id="@+id/textViewFloor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/room"
+        android:text="Nền Sàn"
+        />
+    <TextView
+        android:id="@+id/nenSan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textViewFloor"
+        android:text="@string/nenSAN"
+        />
+
+    <Spinner
+        android:id="@+id/spinnerFloor"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/nenSan"
+        android:layout_marginTop="8dp"
+        android:entries="@array/score_array" />
+
+    <!-- Tiêu chí Thùng rác -->
+    <TextView
+        android:id="@+id/textViewTrashCan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/spinnerFloor"
+        android:layout_marginTop="16dp"
+        android:text="Thùng Rác" />
+    <TextView
+        android:id="@+id/thungRac"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textViewTrashCan"
+        android:text="@string/thungrac"
+        />
+    <Spinner
+        android:id="@+id/spinnerTrashCan"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/thungRac"
+        android:layout_marginTop="8dp"
+        android:entries="@array/score_array" />
+
+    <!-- Tiêu chí Gạt tàn -->
+    <TextView
+        android:id="@+id/textViewAshtray"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/spinnerTrashCan"
+        android:layout_marginTop="16dp"
+        android:text="Gạt Tàn" />
+    <TextView
+        android:id="@+id/gatTan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textViewAshtray"
+        android:text="@string/thungrac"
+        />
+    <Spinner
+        android:id="@+id/spinnerAshtray"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/gatTan"
+        android:layout_marginTop="8dp"
+        android:entries="@array/score_array" />
+
+    <!-- Tiêu chí Tường -->
+    <TextView
+        android:id="@+id/textViewWall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/spinnerAshtray"
+        android:layout_marginTop="16dp"
+        android:text="Tường" />
+    <TextView
+        android:id="@+id/tuong"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textViewWall"
+        android:text="@string/tuongCua"
+        />
+    <Spinner
+        android:id="@+id/spinnerWall"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tuong"
+        android:layout_marginTop="8dp"
+        android:entries="@array/score_array" />
+
+    <!-- Tiêu chí Cửa sổ -->
+    <TextView
+        android:id="@+id/textViewWindow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/spinnerWall"
+        android:layout_marginTop="16dp"
+        android:text="Cửa Sổ" />
+    <TextView
+        android:id="@+id/CuaSo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textViewWindow"
+        android:text="@string/tuongCua"
+        />
+    <Spinner
+        android:id="@+id/spinnerWindow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/CuaSo"
+        android:layout_marginTop="8dp"
+        android:entries="@array/score_array" />
+
+    <!-- Tiêu chí Trần -->
+    <TextView
+        android:id="@+id/textViewCeiling"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/spinnerWindow"
+        android:layout_marginTop="16dp"
+        android:text="Trần" />
+    <TextView
+        android:id="@+id/tran"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textViewCeiling"
+        android:text="@string/tran"
+        />
+    <Spinner
+        android:id="@+id/spinnerCeiling"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tran"
+        android:layout_marginTop="8dp"
+        android:entries="@array/score_array" />
+
+    <!-- Tiêu chí Đèn -->
+    <TextView
+        android:id="@+id/textViewLight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/spinnerCeiling"
+        android:layout_marginTop="16dp"
+        android:text="Đèn" />
+    <TextView
+        android:id="@+id/den"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textViewLight"
+        android:text="@string/den"
+        />
+    <Spinner
+        android:id="@+id/spinnerLight"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/den"
+        android:layout_marginTop="8dp"
+        android:entries="@array/score_array" />
+
+    <!-- Tiêu chí Góc hành lang -->
+    <TextView
+        android:id="@+id/textViewCorridor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/spinnerLight"
+        android:layout_marginTop="16dp"
+        android:text="Góc Hành Lang" />
+    <TextView
+        android:id="@+id/goc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textViewCorridor"
+        android:text="@string/gochanhlang"
+        />
+    <Spinner
+        android:id="@+id/spinnerCorridor"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/goc"
+        android:layout_marginTop="8dp"
+        android:entries="@array/score_array" />
+
+    <!-- Button để tính tổng điểm -->
+    <Button
+        android:id="@+id/btnSave"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/spinnerCorridor"
+        android:layout_marginTop="16dp"
+        android:text="Chấm điểm" />
+
+
+    <Button
+        android:id="@+id/buttonBack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnSave"
+        android:text="Quay Lại"
+        android:onClick="onBackButtonClick"
+        android:layout_marginTop="16dp"/>
+</RelativeLayout>
+</ScrollView>

@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,13 +26,15 @@ import com.tienminh.a5s_project_hand_on.database.DatabaseHelper;
 
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class VanPhongActivity extends AppCompatActivity {
     TextView txtView;
     Integer area_id;
     Button btnAdd, btnBack;
     RecyclerView recyclerView;
-    ArrayList<Room> data;
+    ArrayList<Room> data = new ArrayList<>();
     MyAdapterRecycler adapter;
     Room new_room;
     @Override
@@ -46,6 +49,8 @@ public class VanPhongActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerViewRooms);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        adapter = new MyAdapterRecycler(data, R.layout.item_layout);
+        recyclerView.setAdapter(adapter);
 
         Intent intent = getIntent();
         if (intent != null && intent.getExtras() != null) {
@@ -63,9 +68,7 @@ public class VanPhongActivity extends AppCompatActivity {
             }
         }
 
-        data = getData(new Room(area_id)); // Hàm này trả về danh sách dữ liệu của bạn
-        adapter = new MyAdapterRecycler(data, R.layout.item_layout);
-        recyclerView.setAdapter(adapter);
+        getData(new Room(area_id));
 
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,7 +88,6 @@ public class VanPhongActivity extends AppCompatActivity {
 
                 // Thiết lập layout cho dialog
                 builder.setView(layout);
-
                 // Thiết lập nút "Thêm"
                 builder.setPositiveButton("Thêm", new DialogInterface.OnClickListener() {
                     @Override
@@ -117,8 +119,8 @@ public class VanPhongActivity extends AppCompatActivity {
                 builder.setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        new_room = new Room("", area_id);
                         // Đóng dialog
+                        new_room = new Room("", area_id);
                         dialogInterface.dismiss();
                     }
                 });
@@ -139,7 +141,12 @@ public class VanPhongActivity extends AppCompatActivity {
                 recyclerView, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
-                Toast.makeText(view.getContext(), "onClick phần tử " + position, Toast.LENGTH_SHORT).show();
+                Intent i = new Intent(VanPhongActivity.this, ChamDiemActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString("nameOfRoom", data.get(position).getName());
+                i.putExtras(bundle);
+
+                startActivity(i);
             }
 
             @Override
@@ -148,31 +155,35 @@ public class VanPhongActivity extends AppCompatActivity {
         }));
     }
 
-//    doan code nay dang bi loi do la keyword return return luon chu ko doi thread kia
-    private ArrayList<Room> getData(Room room){
-        ArrayList<Room> new_result = new ArrayList<>();
-        new DatabaseHelper.ExecuteGetRooms<ArrayList<Room>>(new DatabaseCallbackArray<ArrayList<Room>>() {
+    private void getData(Room room){
+        ExecutorService service = Executors.newSingleThreadExecutor();
+        service.execute(new Runnable() {
             @Override
-            public void onTaskComplete(ArrayList<Room> result) {
-                for (Room i:result) {
-                    new_result.add(i);
-                }
+            public void run() {
+                new DatabaseHelper.ExecuteGetRooms<ArrayList<Room>>(new DatabaseCallbackArray<ArrayList<Room>>() {
+                    @Override
+                    public void onTaskComplete(ArrayList<Room> result) {
+                        for (Room i:result) {
+                            data.add(i);
+                        }
+                    }
+                }, VanPhongActivity.this, room).execute();
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter.notifyDataSetChanged();
+                    }
+                });
             }
-        }, this, room).execute();
+        });
 
-        return new_result;
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        adapter.notifyDataSetChanged();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-//        data = getData(new Room(area_id));
+        getData(new Room(area_id));
         adapter.notifyDataSetChanged();
     }
 }
