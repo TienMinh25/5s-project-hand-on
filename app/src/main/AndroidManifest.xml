@@ -16,7 +16,7 @@
         tools:targetApi="31">
 
         <activity
-            android:name=".SignInActivity"
+            android:name=".activities.SignInActivity"
             android:label="Đăng Nhập"
             android:exported="true">
             <intent-filter>
@@ -26,7 +26,7 @@
         </activity>
 
         <activity
-            android:name=".AdminSignUpActivity"
+            android:name=".activities.AdminSignUpActivity"
             android:label="Đăng Ký"
             android:exported="true">
             <intent-filter>
@@ -36,7 +36,57 @@
         </activity>
 
         <activity
-            android:name=".MainActivity"
+            android:name=".activities.GiangDuongActivity"
+            android:label="Khu Vực Giảng Đường"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".activities.KhuVucChungActivity"
+            android:label="Khu Vực Chung"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".activities.LabActivity"
+            android:label="Khu Vực Phòng Lab"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".activities.VanPhongActivity"
+            android:label="Khu Vực Văn Phòng"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".activities.MarkActivity"
+            android:label="Chấm Điểm"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".activities.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -44,6 +94,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".activities.ChamDiemActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
     </application>
 
 </manifest>
