@@ -1,15 +1,13 @@
-package com.tienminh.a5s_project_hand_on;
+package com.tienminh.a5s_project_hand_on.activities;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.tienminh.a5s_project_hand_on.R;
 import com.tienminh.a5s_project_hand_on.adapter.MyAdapterRecycler;
 import com.tienminh.a5s_project_hand_on.classEvents.RecyclerTouchListener;
 import com.tienminh.a5s_project_hand_on.classes.Room;
@@ -25,13 +24,12 @@ import com.tienminh.a5s_project_hand_on.database.DatabaseCallbackArray;
 import com.tienminh.a5s_project_hand_on.database.DatabaseHelper;
 
 import java.util.ArrayList;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class VanPhongActivity extends AppCompatActivity {
     TextView txtView;
-    Integer area_id;
+    Integer area_id, user_id;
     Button btnAdd, btnBack;
     RecyclerView recyclerView;
     ArrayList<Room> data = new ArrayList<>();
@@ -65,6 +63,9 @@ public class VanPhongActivity extends AppCompatActivity {
             }
             if (bundle.containsKey("area_id")) {
                 area_id = bundle.getInt("area_id");
+            }
+            if (bundle.containsKey("user_id")) {
+                user_id = bundle.getInt("user_id");
             }
         }
 
@@ -133,6 +134,9 @@ public class VanPhongActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(VanPhongActivity.this, MarkActivity.class);
+                Bundle bundle1 = new Bundle();
+                bundle1.putInt("user_id", user_id);
+                intent.putExtras(bundle1);
                 startActivity(intent);
             }
         });
@@ -144,6 +148,8 @@ public class VanPhongActivity extends AppCompatActivity {
                 Intent i = new Intent(VanPhongActivity.this, ChamDiemActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putString("nameOfRoom", data.get(position).getName());
+                bundle.putInt("user_id", user_id);
+                bundle.putInt("room_id", position+1);
                 i.putExtras(bundle);
 
                 startActivity(i);
@@ -163,6 +169,7 @@ public class VanPhongActivity extends AppCompatActivity {
                 new DatabaseHelper.ExecuteGetRooms<ArrayList<Room>>(new DatabaseCallbackArray<ArrayList<Room>>() {
                     @Override
                     public void onTaskComplete(ArrayList<Room> result) {
+                        data.clear();
                         for (Room i:result) {
                             data.add(i);
                         }
@@ -185,5 +192,15 @@ public class VanPhongActivity extends AppCompatActivity {
         super.onResume();
         getData(new Room(area_id));
         adapter.notifyDataSetChanged();
+        Intent intent1 = getIntent();
+        if (intent1 != null && intent1.getExtras() != null) {
+            // Lấy Bundle từ Intent
+            Bundle bundle = intent1.getExtras();
+
+            if (bundle.containsKey("user_id")) {
+                user_id = bundle.getInt("user_id");
+            }
+        }
     }
+
 }

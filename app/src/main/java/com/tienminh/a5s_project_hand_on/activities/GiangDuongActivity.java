@@ -1,15 +1,13 @@
-package com.tienminh.a5s_project_hand_on;
+package com.tienminh.a5s_project_hand_on.activities;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.tienminh.a5s_project_hand_on.R;
 import com.tienminh.a5s_project_hand_on.adapter.MyAdapterRecycler;
 import com.tienminh.a5s_project_hand_on.classEvents.RecyclerTouchListener;
 import com.tienminh.a5s_project_hand_on.classes.Room;
@@ -28,9 +27,9 @@ import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class LabActivity extends AppCompatActivity {
+public class GiangDuongActivity extends AppCompatActivity {
     TextView txtView;
-    Integer area_id;
+    Integer area_id, user_id;
     Button btnAdd, btnBack;
     RecyclerView recyclerView;
     ArrayList<Room> data = new ArrayList<>();
@@ -65,6 +64,9 @@ public class LabActivity extends AppCompatActivity {
             if (bundle.containsKey("area_id")) {
                 area_id = bundle.getInt("area_id");
             }
+            if (bundle.containsKey("user_id")) {
+                user_id = bundle.getInt("user_id");
+            }
         }
 
         getData(new Room(area_id));
@@ -73,15 +75,15 @@ public class LabActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // Tạo một đối tượng AlertDialog.Builder
-                AlertDialog.Builder builder = new AlertDialog.Builder(LabActivity.this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(GiangDuongActivity.this);
                 builder.setTitle("Thêm Room");
 
                 // Tạo layout của dialog
-                LinearLayout layout = new LinearLayout(LabActivity.this);
+                LinearLayout layout = new LinearLayout(GiangDuongActivity.this);
                 layout.setOrientation(LinearLayout.VERTICAL);
 
                 // Tạo EditText để nhập tên Room
-                final EditText editTextName = new EditText(LabActivity.this);
+                final EditText editTextName = new EditText(GiangDuongActivity.this);
                 editTextName.setHint("Nhập tên Room");
                 layout.addView(editTextName);
 
@@ -101,13 +103,13 @@ public class LabActivity extends AppCompatActivity {
                             @Override
                             public void onTaskComplete(String result) {
                                 if (result != null) {
-                                    Toast.makeText(LabActivity.this, "Thêm phòng thành công",Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(GiangDuongActivity.this, "Thêm phòng thành công",Toast.LENGTH_SHORT).show();
                                 }
                                 else {
-                                    Toast.makeText(LabActivity.this, "Thêm phòng thất bại",Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(GiangDuongActivity.this, "Thêm phòng thất bại",Toast.LENGTH_SHORT).show();
                                 }
                             }
-                        }, LabActivity.this, new_room).execute();
+                        }, GiangDuongActivity.this, new_room).execute();
                         // Đóng dialog
                         dialogInterface.dismiss();
 
@@ -131,7 +133,10 @@ public class LabActivity extends AppCompatActivity {
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(LabActivity.this, MarkActivity.class);
+                Intent intent = new Intent(GiangDuongActivity.this, MarkActivity.class);
+                Bundle bundle1 = new Bundle();
+                bundle1.putInt("user_id", user_id);
+                intent.putExtras(bundle1);
                 startActivity(intent);
             }
         });
@@ -140,9 +145,11 @@ public class LabActivity extends AppCompatActivity {
                 recyclerView, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
-                Intent i = new Intent(LabActivity.this, ChamDiemActivity.class);
+                Intent i = new Intent(GiangDuongActivity.this, ChamDiemActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putString("nameOfRoom", data.get(position).getName());
+                bundle.putInt("user_id", user_id);
+                bundle.putInt("room_id", position+1);
                 i.putExtras(bundle);
 
                 startActivity(i);
@@ -159,14 +166,17 @@ public class LabActivity extends AppCompatActivity {
         service.execute(new Runnable() {
             @Override
             public void run() {
+
                 new DatabaseHelper.ExecuteGetRooms<ArrayList<Room>>(new DatabaseCallbackArray<ArrayList<Room>>() {
                     @Override
                     public void onTaskComplete(ArrayList<Room> result) {
+                        data.clear();
                         for (Room i:result) {
                             data.add(i);
                         }
+
                     }
-                }, LabActivity.this, room).execute();
+                }, GiangDuongActivity.this, room).execute();
 
                 runOnUiThread(new Runnable() {
                     @Override
@@ -176,6 +186,7 @@ public class LabActivity extends AppCompatActivity {
                 });
             }
         });
+
     }
 
     @Override
@@ -183,5 +194,14 @@ public class LabActivity extends AppCompatActivity {
         super.onResume();
         getData(new Room(area_id));
         adapter.notifyDataSetChanged();
+        Intent intent1 = getIntent();
+        if (intent1 != null && intent1.getExtras() != null) {
+            // Lấy Bundle từ Intent
+            Bundle bundle = intent1.getExtras();
+
+            if (bundle.containsKey("user_id")) {
+                user_id = bundle.getInt("user_id");
+            }
+        }
     }
 }

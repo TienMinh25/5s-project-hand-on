@@ -1,4 +1,4 @@
-package com.tienminh.a5s_project_hand_on;
+package com.tienminh.a5s_project_hand_on.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,6 +7,8 @@ import android.widget.Button;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.tienminh.a5s_project_hand_on.R;
 
 public class BaoCaoActivity extends AppCompatActivity {
     @Override

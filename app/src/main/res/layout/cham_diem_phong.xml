@@ -62,7 +62,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/textViewTrashCan"
-        android:text="@string/thungrac"
+        android:text="@string/thungRac"
         />
     <Spinner
         android:id="@+id/spinnerTrashCan"
@@ -85,7 +85,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/textViewAshtray"
-        android:text="@string/thungrac"
+        android:text="@string/thungGatTan"
         />
     <Spinner
         android:id="@+id/spinnerAshtray"
@@ -108,7 +108,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/textViewWall"
-        android:text="@string/tuongCua"
+        android:text="@string/tuong"
         />
     <Spinner
         android:id="@+id/spinnerWall"
@@ -131,7 +131,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/textViewWindow"
-        android:text="@string/tuongCua"
+        android:text="@string/cuaSo"
         />
     <Spinner
         android:id="@+id/spinnerWindow"
@@ -200,7 +200,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/textViewCorridor"
-        android:text="@string/gochanhlang"
+        android:text="@string/gocHanhLang"
         />
     <Spinner
         android:id="@+id/spinnerCorridor"
@@ -219,14 +219,5 @@
         android:layout_marginTop="16dp"
         android:text="Chấm điểm" />
 
-
-    <Button
-        android:id="@+id/buttonBack"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/btnSave"
-        android:text="Quay Lại"
-        android:onClick="onBackButtonClick"
-        android:layout_marginTop="16dp"/>
 </RelativeLayout>
 </ScrollView>

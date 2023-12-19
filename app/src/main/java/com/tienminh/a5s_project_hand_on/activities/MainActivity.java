@@ -1,4 +1,4 @@
-package com.tienminh.a5s_project_hand_on;
+package com.tienminh.a5s_project_hand_on.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -10,7 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.tienminh.a5s_project_hand_on.database.DatabaseHelper;
+import com.tienminh.a5s_project_hand_on.R;
 
 public class MainActivity extends AppCompatActivity {
     Button btnLogout;
@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
     Button btnBaoCao;
     TextView welcomeMessageTextView;
     String fullName = "";
-
+    Integer user_id;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (bundle != null) {
             fullName = bundle.getString("fullname");
+            user_id = bundle.getInt("user_id");
         }
 
         // Tìm TextView trong layout
@@ -61,6 +62,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, MarkActivity.class); // Tạo intent để mở SignInActivity
+                Bundle bundle1 = new Bundle();
+
+                bundle1.putInt("user_id", user_id);
+                intent.putExtras(bundle1);
                 startActivity(intent);
             }
         });

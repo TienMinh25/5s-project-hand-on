@@ -1,10 +1,12 @@
 <resources>
     <string name="app_name">5s-project-hand-on</string>
     <string name="total_score_label">Tổng: %d</string>
-    <string name="nenSAN">Có sạch  sẽ và được giữ gìn tốt không? Có rác trên sàn không?</string>
-    <string name= "thungrac">Có sạch sẽ và đặt ở vị trí hợp lý không?</string>
-    <string name = "tuongCua">Có sạch sẽ và được giữ gìn tốt không?</string>
-    <string name = "tran">Có sạch sẽ và được giữ gìn tốt không? Có bụi hoặc mạng nhện không?</string>
-    <string name="den">Có sạch sẽ, an toàn và được bố trí hợp lí không? Còn sử dụng tốt hay không?</string>
-    <string name="gochanhlang">Có rác hoặc đồ vật nào không cần thiết không?</string>
+    <string name="nenSAN">Có sạch sẽ và được giữ gìn tốt không? Có rác trên sàn không</string>
+    <string name="thungRac">Có sạch sẽ và đặt ở vị trí hợp lý không?</string>
+    <string name="thungGatTan">Có sạch sẽ và đặt ở vị trí hợp lý không?</string>
+    <string name="tuong">Có sạch sẽ và được giữ gìn tốt không?</string>
+    <string name="cuaSo">Có sạch sẽ và được giữ gìn tốt không?</string>
+    <string name="tran">Có sạch sẽ và được giữ gìn tốt không? Có bụi hoặc mạng nhện không?</string>
+    <string name="den">Có sạch sẽ, an toàn và được bố trí hợp lý không? Còn sử dụng tốt hay không?</string>
+    <string name="gocHanhLang">Có rác hoặc đồ vật nào không cần thiết không?</string>
 </resources>

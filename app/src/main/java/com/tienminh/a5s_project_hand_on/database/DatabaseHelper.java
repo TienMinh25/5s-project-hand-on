@@ -11,6 +11,7 @@ import android.util.Log;
 
 import com.tienminh.a5s_project_hand_on.R;
 import com.tienminh.a5s_project_hand_on.classes.Room;
+import com.tienminh.a5s_project_hand_on.classes.Score;
 import com.tienminh.a5s_project_hand_on.classes.User;
 
 import java.util.ArrayList;
@@ -81,14 +82,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 );
 
         db.execSQL("INSERT OR IGNORE INTO descriptions(title, content)"+
-                "VALUES('Nền sàn', 'Có sạch sẽ và được giữ gìn tốt không? Có rác trên sàn không')," +
+                "VALUES('Nền sàn', 'Có sạch sẽ và được giữ gìn tốt không? Có rác trên sàn không?')," +
                 "('Thùng rác', 'Có sạch sẽ và đặt ở vị trí hợp lý không?')," +
                 "('Thùng gạt tàn', 'Có sạch sẽ và đặt ở vị trí hợp lý không?')," +
                 "('Tường', 'Có sạch sẽ và được giữ gìn tốt không?')," +
                 "('Cửa sổ', 'Có sạch sẽ và được giữ gìn tốt không?')," +
                 "('Trần', 'Có sạch sẽ và được giữ gìn tốt không? Có bụi hoặc mạng nhện không?')," +
                 "('Đèn', 'Có sạch sẽ, an toàn và được bố trí hợp lý không? Còn sử dụng tốt hay không?')," +
-                "('Góc hành lang', 'Có rác hoặc đồ vật nào không cần thiết không');"
+                "('Góc hành lang', 'Có rác hoặc đồ vật nào không cần thiết không?');"
                   );
     }
 
@@ -162,13 +163,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             try {
                 db = SQLiteDatabase.openDatabase(context.getDatabasePath(DATABASE_NAME).getPath(), null, SQLiteDatabase.OPEN_READWRITE);
 
-                String[] projection = { "fullname", "username", "password", "email", "phone", "is_admin" };
+                String[] projection = { "id", "fullname", "username", "password", "email", "phone", "is_admin" };
                 String selection = "username = ? AND password = ? AND is_admin = ?";
                 String[] selectionArgs = { user.getUsername(), user.getPassword(), String.valueOf(user.getIs_admin()) };
 
                 try (Cursor cursor = db.query("users", projection, selection, selectionArgs, null, null, null)) {
                     if (cursor != null && cursor.moveToFirst()) {
-                        User newUser = new User(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getInt(5));
+                        User newUser = new User(cursor.getInt(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getInt(6));
                         return (T) newUser;
                     }
                 }
@@ -374,6 +375,64 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     // Có lỗi khi chèn dữ liệu
                     return null;
                 }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                if (db != null && db.isOpen()) {
+                    db.close();
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(T result) {
+            callback.onTaskComplete(result);
+        }
+    }
+
+    public static class ExecuteMark<T> extends AsyncTask<Void, Void, T> {
+        private ArrayList<Score> scores;
+        private DatabaseCallback<T> callback;
+        private Context context;
+
+        public ExecuteMark(DatabaseCallback<T> callback, Context context, ArrayList<Score> scores) {
+            this.callback = callback;
+            this.context = context;
+            this.scores = scores;
+        }
+
+        @Override
+        protected T doInBackground(Void... params) {
+            SQLiteDatabase db = null;
+            try {
+                db = SQLiteDatabase.openDatabase(context.getDatabasePath(DATABASE_NAME).getPath(), null, SQLiteDatabase.OPEN_READWRITE);
+
+                // Bắt đầu một giao dịch để tăng hiệu suất khi thêm nhiều bản ghi
+                db.beginTransaction();
+
+                // Lặp qua danh sách các điểm và chèn từng bản ghi vào bảng
+                for (Score score : scores) {
+                    // Tạo ContentValues để chứa dữ liệu muốn chèn
+                    ContentValues values = new ContentValues();
+                    values.put("user_id", score.getUser_id());
+                    values.put("room_id", score.getRoom_id());
+                    values.put("description_id", score.getDescription_id());
+                    values.put("score", score.getScore());
+
+                    // Chèn dữ liệu vào bảng 'rooms'
+                    long newRowId = db.insert("scores", null, values);
+
+                    if (newRowId == -1) {
+                        // Có lỗi khi chèn dữ liệu, hủy giao dịch và thoát
+                        db.endTransaction();
+                        return null;
+                    }
+                }
+
+                // Giao dịch thành công, đánh dấu là đã thành công
+                db.setTransactionSuccessful();
+                return (T)new Boolean(true);
             } catch (SQLException e) {
                 e.printStackTrace();
             } finally {

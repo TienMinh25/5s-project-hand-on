@@ -1,6 +1,7 @@
 package com.tienminh.a5s_project_hand_on.classes;
 
 public class User {
+    private Integer id;
     private String fullname;
     private String username;
     private String password;
@@ -29,6 +30,16 @@ public class User {
     }
 
     public User(String fullname, String username, String password, String email, String phone, Integer is_admin) {
+        this.fullname = fullname;
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.phone = phone;
+        this.is_admin = is_admin;
+    }
+
+    public User(Integer id, String fullname, String username, String password, String email, String phone, Integer is_admin) {
+        this.id = id;
         this.fullname = fullname;
         this.username = username;
         this.password = password;
@@ -83,5 +94,13 @@ public class User {
 
     public void setIs_admin(Integer is_admin) {
         this.is_admin = is_admin;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 }
