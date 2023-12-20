@@ -14,6 +14,7 @@ import com.tienminh.a5s_project_hand_on.R;
 
 public class MarkActivity extends AppCompatActivity {
     Integer user_id;
+    String fullName = "";
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,8 +30,13 @@ public class MarkActivity extends AppCompatActivity {
         Bundle bundle = intent.getExtras();
 
         if (bundle != null) {
-            user_id = bundle.getInt("user_id");
-            Log.d("TEST_@@", Integer.toString(user_id));
+            if (bundle.containsKey("fullname")) {
+                fullName = bundle.getString("fullname");
+            }
+
+            if (bundle.containsKey("user_id")) {
+                user_id = bundle.getInt("user_id");
+            }
         }
 
         btnOffice.setOnClickListener(new View.OnClickListener() {
@@ -41,6 +47,7 @@ public class MarkActivity extends AppCompatActivity {
                 bundle.putString("title", btnOffice.getText().toString());
                 bundle.putInt("area_id", new Integer(1));
                 bundle.putInt("user_id", user_id);
+                bundle.putString("fullname", fullName);
                 intent.putExtras(bundle);
                 startActivity(intent);
             }
@@ -54,6 +61,7 @@ public class MarkActivity extends AppCompatActivity {
                 bundle.putString("title", btnLectureHall.getText().toString());
                 bundle.putInt("area_id", new Integer(2));
                 bundle.putInt("user_id", user_id);
+                bundle.putString("fullname", fullName);
                 intent.putExtras(bundle);
                 startActivity(intent);
             }
@@ -67,6 +75,7 @@ public class MarkActivity extends AppCompatActivity {
                 bundle.putString("title", btnLab.getText().toString());
                 bundle.putInt("area_id", new Integer(3));
                 bundle.putInt("user_id", user_id);
+                bundle.putString("fullname", fullName);
                 intent.putExtras(bundle);
                 startActivity(intent);
             }
@@ -80,6 +89,7 @@ public class MarkActivity extends AppCompatActivity {
                 bundle.putString("title", btnCommon.getText().toString());
                 bundle.putInt("area_id", new Integer(4));
                 bundle.putInt("user_id", user_id);
+                bundle.putString("fullname", fullName);
                 intent.putExtras(bundle);
                 startActivity(intent);
             }
@@ -90,8 +100,28 @@ public class MarkActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(MarkActivity.this, MainActivity.class);
                 Bundle bundle1 = new Bundle();
+                bundle1.putString("fullname", fullName);
+                bundle1.putInt("user_id", user_id);
+                intent.putExtras(bundle1);
                 startActivity(intent);
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+
+        if (bundle != null) {
+            if (bundle.containsKey("fullname")) {
+                fullName = bundle.getString("fullname");
+            }
+
+            if (bundle.containsKey("user_id")) {
+                user_id = bundle.getInt("user_id");
+            }
+        }
     }
 }

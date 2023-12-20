@@ -448,4 +448,47 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             callback.onTaskComplete(result);
         }
     }
+
+    public static class ExecuteGetInformationForGenCSV<T> extends AsyncTask<Void, Void, T> {
+        private Room room;
+        private DatabaseCallback<T> callback;
+        private Context context;
+
+        public ExecuteGetInformationForGenCSV(DatabaseCallback<T> callback, Context context, Room room) {
+            this.callback = callback;
+            this.context = context;
+            this.room = room;
+        }
+
+        @Override
+        protected T doInBackground(Void... params) {
+            SQLiteDatabase db = null;
+            ArrayList<Integer> scoreResults = new ArrayList<>();
+            try {
+                db = SQLiteDatabase.openDatabase(context.getDatabasePath(DATABASE_NAME).getPath(), null, SQLiteDatabase.OPEN_READWRITE);
+
+                String rawQuery = "SELECT score FROM scores WHERE room_id = (SELECT id FROM rooms WHERE area_id = ? AND name = ?)";
+                Cursor cursor = db.rawQuery(rawQuery, new String[]{String.valueOf(room.getArea_id()), room.getName()});
+                if (cursor!= null) {
+                    while (cursor.moveToFirst()) {
+                        scoreResults.add(cursor.getInt(0));
+                    }
+                }
+
+                return (T)scoreResults;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                if (db != null && db.isOpen()) {
+                    db.close();
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(T result) {
+            callback.onTaskComplete(result);
+        }
+    }
 }

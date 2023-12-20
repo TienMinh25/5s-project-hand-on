@@ -1,13 +1,9 @@
 package com.tienminh.a5s_project_hand_on.activities;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,6 +16,7 @@ import com.tienminh.a5s_project_hand_on.R;
 import com.tienminh.a5s_project_hand_on.adapter.MyAdapterRecycler;
 import com.tienminh.a5s_project_hand_on.classEvents.RecyclerTouchListener;
 import com.tienminh.a5s_project_hand_on.classes.Room;
+import com.tienminh.a5s_project_hand_on.database.DatabaseCallback;
 import com.tienminh.a5s_project_hand_on.database.DatabaseCallbackArray;
 import com.tienminh.a5s_project_hand_on.database.DatabaseHelper;
 
@@ -27,22 +24,20 @@ import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class VanPhongActivity extends AppCompatActivity {
+public class DownloadActivity extends AppCompatActivity {
     TextView txtView;
     Integer area_id, user_id;
-    Button btnAdd, btnBack;
+    Button btnBack;
     RecyclerView recyclerView;
     ArrayList<Room> data = new ArrayList<>();
     MyAdapterRecycler adapter;
-    Room new_room;
     String fullName = "";
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.area_actv);
+        setContentView(R.layout.download_actv);
 
         txtView = findViewById(R.id.TieuDeChamDiem);
-        btnAdd = findViewById(R.id.btnAdd);
         btnBack = findViewById(R.id.btnBack);
 
         recyclerView = findViewById(R.id.recyclerViewRooms);
@@ -65,84 +60,25 @@ public class VanPhongActivity extends AppCompatActivity {
             if (bundle.containsKey("area_id")) {
                 area_id = bundle.getInt("area_id");
             }
-            if (bundle.containsKey("user_id")) {
-                user_id = bundle.getInt("user_id");
-            }
             if (bundle.containsKey("fullname")) {
                 fullName = bundle.getString("fullname");
+            }
+            if (bundle.containsKey("user_id")) {
+                user_id = bundle.getInt("user_id");
             }
         }
 
         getData(new Room(area_id));
 
-        btnAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Tạo một đối tượng AlertDialog.Builder
-                AlertDialog.Builder builder = new AlertDialog.Builder(VanPhongActivity.this);
-                builder.setTitle("Thêm Room");
-
-                // Tạo layout của dialog
-                LinearLayout layout = new LinearLayout(VanPhongActivity.this);
-                layout.setOrientation(LinearLayout.VERTICAL);
-
-                // Tạo EditText để nhập tên Room
-                final EditText editTextName = new EditText(VanPhongActivity.this);
-                editTextName.setHint("Nhập tên Room");
-                layout.addView(editTextName);
-
-                // Thiết lập layout cho dialog
-                builder.setView(layout);
-                // Thiết lập nút "Thêm"
-                builder.setPositiveButton("Thêm", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        // Lấy tên từ EditText
-                        String roomName = editTextName.getText().toString();
-                        new_room = new Room(roomName, area_id);
-                        // Thêm Room vào ArrayList<Room> data
-                        data.add(new_room); // Lưu ý: Bạn cần cung cấp areaId theo logic của ứng dụng
-                        adapter.notifyDataSetChanged();
-                        new DatabaseHelper.ExecuteAddRoom<String>(new DatabaseCallbackArray<String>() {
-                            @Override
-                            public void onTaskComplete(String result) {
-                                if (result != null) {
-                                    Toast.makeText(VanPhongActivity.this, "Thêm phòng thành công",Toast.LENGTH_SHORT).show();
-                                }
-                                else {
-                                    Toast.makeText(VanPhongActivity.this, "Thêm phòng thất bại",Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        }, VanPhongActivity.this, new_room).execute();
-                        // Đóng dialog
-                        dialogInterface.dismiss();
-
-                    }
-                });
-
-                // Thiết lập nút "Hủy"
-                builder.setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        // Đóng dialog
-                        new_room = new Room("", area_id);
-                        dialogInterface.dismiss();
-                    }
-                });
-
-                builder.show();
-            }
-        });
-
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent1 = new Intent(VanPhongActivity.this, MarkActivity.class);
-                Bundle bundle1 = new Bundle();
-                bundle1.putInt("user_id", user_id);
-                bundle1.putString("fullname", fullName);
-                intent1.putExtras(bundle1);
-                startActivity(intent1);
+                Intent intent = new Intent(DownloadActivity.this, BaoCaoActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putInt("user_id", user_id);
+                bundle.putString("fullname", fullName);
+                intent.putExtras(bundle);
+                startActivity(intent);
             }
         });
 
@@ -150,14 +86,27 @@ public class VanPhongActivity extends AppCompatActivity {
                 recyclerView, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
-                Intent i = new Intent(VanPhongActivity.this, ChamDiemActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putString("nameOfRoom", data.get(position).getName());
-                bundle.putInt("user_id", user_id);
-                bundle.putInt("room_id", position+1);
-                i.putExtras(bundle);
+                // phan goi db sinh file csv
+                ExecutorService service = Executors.newSingleThreadExecutor();
+                service.execute(new Runnable() {
+                    @Override
+                    public void run() {
 
-                startActivity(i);
+                        new DatabaseHelper.ExecuteGetInformationForGenCSV<ArrayList<Integer>>(new DatabaseCallback<ArrayList<Integer>>() {
+                            @Override
+                            public void onTaskComplete(ArrayList<Integer> result) {
+
+                            }
+                        }, DownloadActivity.this, new Room(data.get(position).getName(), area_id)).execute();
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(DownloadActivity.this, "Download successful", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                });
             }
 
             @Override
@@ -179,7 +128,7 @@ public class VanPhongActivity extends AppCompatActivity {
                             data.add(i);
                         }
                     }
-                }, VanPhongActivity.this, room).execute();
+                }, DownloadActivity.this, room).execute();
 
                 runOnUiThread(new Runnable() {
                     @Override
@@ -211,11 +160,11 @@ public class VanPhongActivity extends AppCompatActivity {
             if (bundle.containsKey("area_id")) {
                 area_id = bundle.getInt("area_id");
             }
-            if (bundle.containsKey("user_id")) {
-                user_id = bundle.getInt("user_id");
-            }
             if (bundle.containsKey("fullname")) {
                 fullName = bundle.getString("fullname");
+            }
+            if (bundle.containsKey("user_id")) {
+                user_id = bundle.getInt("user_id");
             }
         }
     }

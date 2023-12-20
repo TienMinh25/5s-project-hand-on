@@ -35,6 +35,7 @@ public class GiangDuongActivity extends AppCompatActivity {
     ArrayList<Room> data = new ArrayList<>();
     MyAdapterRecycler adapter;
     Room new_room;
+    String fullName = "";
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +67,9 @@ public class GiangDuongActivity extends AppCompatActivity {
             }
             if (bundle.containsKey("user_id")) {
                 user_id = bundle.getInt("user_id");
+            }
+            if (bundle.containsKey("fullname")) {
+                fullName = bundle.getString("fullname");
             }
         }
 
@@ -136,6 +140,7 @@ public class GiangDuongActivity extends AppCompatActivity {
                 Intent intent = new Intent(GiangDuongActivity.this, MarkActivity.class);
                 Bundle bundle1 = new Bundle();
                 bundle1.putInt("user_id", user_id);
+                bundle1.putString("fullname", fullName);
                 intent.putExtras(bundle1);
                 startActivity(intent);
             }
@@ -194,13 +199,25 @@ public class GiangDuongActivity extends AppCompatActivity {
         super.onResume();
         getData(new Room(area_id));
         adapter.notifyDataSetChanged();
-        Intent intent1 = getIntent();
-        if (intent1 != null && intent1.getExtras() != null) {
+        Intent intent = getIntent();
+        if (intent != null && intent.getExtras() != null) {
             // Lấy Bundle từ Intent
-            Bundle bundle = intent1.getExtras();
+            Bundle bundle = intent.getExtras();
 
+            // Kiểm tra xem "title" có tồn tại trong Bundle không
+            if (bundle.containsKey("title")) {
+                // Lấy giá trị của "title" từ Bundle
+                String title = bundle.getString("title");
+                txtView.setText(title);
+            }
+            if (bundle.containsKey("area_id")) {
+                area_id = bundle.getInt("area_id");
+            }
             if (bundle.containsKey("user_id")) {
                 user_id = bundle.getInt("user_id");
+            }
+            if (bundle.containsKey("fullname")) {
+                fullName = bundle.getString("fullname");
             }
         }
     }
