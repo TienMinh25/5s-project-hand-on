@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, MarkActivity.class); // Tạo intent để mở SignInActivity
                 Bundle bundle1 = new Bundle();
-
+                bundle1.putString("fullname", fullName);
                 bundle1.putInt("user_id", user_id);
                 intent.putExtras(bundle1);
                 startActivity(intent);
@@ -91,7 +91,12 @@ public class MainActivity extends AppCompatActivity {
         btnBaoCao.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, BaoCaoActivity.class));
+                Intent intent1 = new Intent(MainActivity.this, BaoCaoActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString("fullname", fullName);
+                bundle.putInt("user_id", user_id);
+                intent1.putExtras(bundle);
+                startActivity(intent1);
             }
         });
     }

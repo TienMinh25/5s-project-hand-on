@@ -35,6 +35,7 @@ public class LabActivity extends AppCompatActivity {
     ArrayList<Room> data = new ArrayList<>();
     MyAdapterRecycler adapter;
     Room new_room;
+    String fullName = "";
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +67,9 @@ public class LabActivity extends AppCompatActivity {
             }
             if (bundle.containsKey("user_id")) {
                 user_id = bundle.getInt("user_id");
+            }
+            if (bundle.containsKey("fullname")) {
+                fullName = bundle.getString("fullname");
             }
         }
 
@@ -133,11 +137,12 @@ public class LabActivity extends AppCompatActivity {
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(LabActivity.this, MarkActivity.class);
+                Intent intent1 = new Intent(LabActivity.this, MarkActivity.class);
                 Bundle bundle1 = new Bundle();
                 bundle1.putInt("user_id", user_id);
-                intent.putExtras(bundle1);
-                startActivity(intent);
+                bundle1.putString("fullname", fullName);
+                intent1.putExtras(bundle1);
+                startActivity(intent1);
             }
         });
 
@@ -150,6 +155,8 @@ public class LabActivity extends AppCompatActivity {
                 bundle.putString("nameOfRoom", data.get(position).getName());
                 bundle.putInt("user_id", user_id);
                 bundle.putInt("room_id", position+1);
+                bundle.putString("fullname", fullName);
+                bundle.putInt("area_id", area_id);
                 i.putExtras(bundle);
 
                 startActivity(i);
@@ -192,12 +199,25 @@ public class LabActivity extends AppCompatActivity {
         getData(new Room(area_id));
         adapter.notifyDataSetChanged();
         Intent intent1 = getIntent();
-        if (intent1 != null && intent1.getExtras() != null) {
+        Intent intent = getIntent();
+        if (intent != null && intent.getExtras() != null) {
             // Lấy Bundle từ Intent
-            Bundle bundle = intent1.getExtras();
+            Bundle bundle = intent.getExtras();
 
+            // Kiểm tra xem "title" có tồn tại trong Bundle không
+            if (bundle.containsKey("title")) {
+                // Lấy giá trị của "title" từ Bundle
+                String title = bundle.getString("title");
+                txtView.setText(title);
+            }
+            if (bundle.containsKey("area_id")) {
+                area_id = bundle.getInt("area_id");
+            }
             if (bundle.containsKey("user_id")) {
                 user_id = bundle.getInt("user_id");
+            }
+            if (bundle.containsKey("fullname")) {
+                fullName = bundle.getString("fullname");
             }
         }
     }
