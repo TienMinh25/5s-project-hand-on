@@ -156,6 +156,7 @@ public class LabActivity extends AppCompatActivity {
                 bundle.putInt("user_id", user_id);
                 bundle.putInt("room_id", position+1);
                 bundle.putString("fullname", fullName);
+                bundle.putInt("area_id", area_id);
                 i.putExtras(bundle);
 
                 startActivity(i);

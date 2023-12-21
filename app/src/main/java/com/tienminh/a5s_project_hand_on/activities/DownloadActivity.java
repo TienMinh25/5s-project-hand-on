@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.tienminh.a5s_project_hand_on.R;
 import com.tienminh.a5s_project_hand_on.adapter.MyAdapterRecycler;
 import com.tienminh.a5s_project_hand_on.classEvents.RecyclerTouchListener;
+import com.tienminh.a5s_project_hand_on.classes.GenExcel;
 import com.tienminh.a5s_project_hand_on.classes.Room;
 import com.tienminh.a5s_project_hand_on.database.DatabaseCallback;
 import com.tienminh.a5s_project_hand_on.database.DatabaseCallbackArray;
@@ -95,16 +96,15 @@ public class DownloadActivity extends AppCompatActivity {
                         new DatabaseHelper.ExecuteGetInformationForGenCSV<ArrayList<Integer>>(new DatabaseCallback<ArrayList<Integer>>() {
                             @Override
                             public void onTaskComplete(ArrayList<Integer> result) {
-
+                                if (result != null) {
+                                    Toast.makeText(DownloadActivity.this, "Download failure", Toast.LENGTH_SHORT).show();
+                                }
+                                else {
+                                    GenExcel.generateExcel(result);
+                                    Toast.makeText(DownloadActivity.this, "Download successful", Toast.LENGTH_SHORT).show();
+                                }
                             }
                         }, DownloadActivity.this, new Room(data.get(position).getName(), area_id)).execute();
-
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(DownloadActivity.this, "Download successful", Toast.LENGTH_SHORT).show();
-                            }
-                        });
                     }
                 });
             }
