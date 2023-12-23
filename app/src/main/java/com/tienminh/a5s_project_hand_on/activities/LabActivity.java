@@ -36,6 +36,7 @@ public class LabActivity extends AppCompatActivity {
     MyAdapterRecycler adapter;
     Room new_room;
     String fullName = "";
+    String title;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,7 +60,7 @@ public class LabActivity extends AppCompatActivity {
             // Kiểm tra xem "title" có tồn tại trong Bundle không
             if (bundle.containsKey("title")) {
                 // Lấy giá trị của "title" từ Bundle
-                String title = bundle.getString("title");
+                title = bundle.getString("title");
                 txtView.setText(title);
             }
             if (bundle.containsKey("area_id")) {
@@ -154,9 +155,10 @@ public class LabActivity extends AppCompatActivity {
                 Bundle bundle = new Bundle();
                 bundle.putString("nameOfRoom", data.get(position).getName());
                 bundle.putInt("user_id", user_id);
-                bundle.putInt("room_id", position+1);
+                bundle.putString("room_name", data.get(position).getName());
                 bundle.putString("fullname", fullName);
                 bundle.putInt("area_id", area_id);
+                bundle.putString("title", title);
                 i.putExtras(bundle);
 
                 startActivity(i);
@@ -191,14 +193,13 @@ public class LabActivity extends AppCompatActivity {
                 });
             }
         });
+        service.shutdown();
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        getData(new Room(area_id));
-        adapter.notifyDataSetChanged();
-        Intent intent1 = getIntent();
         Intent intent = getIntent();
         if (intent != null && intent.getExtras() != null) {
             // Lấy Bundle từ Intent
@@ -207,7 +208,7 @@ public class LabActivity extends AppCompatActivity {
             // Kiểm tra xem "title" có tồn tại trong Bundle không
             if (bundle.containsKey("title")) {
                 // Lấy giá trị của "title" từ Bundle
-                String title = bundle.getString("title");
+                title = bundle.getString("title");
                 txtView.setText(title);
             }
             if (bundle.containsKey("area_id")) {
@@ -220,5 +221,8 @@ public class LabActivity extends AppCompatActivity {
                 fullName = bundle.getString("fullname");
             }
         }
+        getData(new Room(area_id));
+        adapter.notifyDataSetChanged();
+
     }
 }

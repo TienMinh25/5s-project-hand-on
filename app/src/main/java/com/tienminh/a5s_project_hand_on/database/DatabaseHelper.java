@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
-    private static final String DATABASE_NAME = "dbAppAndroid.db";
+    private static final String DATABASE_NAME = "dbAppAndroid";
     private static final int DATABASE_VERSION = 1;
     private static final String INITIALIZE_SCRIPT_NAME = "initialize.sqlite";
 
@@ -411,6 +411,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 // Bắt đầu một giao dịch để tăng hiệu suất khi thêm nhiều bản ghi
                 db.beginTransaction();
 
+                // Tìm room_id theo area_id và tên phòng trong db rồi mới xây dựng được
                 // Lặp qua danh sách các điểm và chèn từng bản ghi vào bảng
                 for (Score score : scores) {
                     // Tạo ContentValues để chứa dữ liệu muốn chèn
@@ -466,16 +467,65 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             ArrayList<Integer> scoreResults = new ArrayList<>();
             try {
                 db = SQLiteDatabase.openDatabase(context.getDatabasePath(DATABASE_NAME).getPath(), null, SQLiteDatabase.OPEN_READWRITE);
+                Log.d("TEST_NAME", room.getName());
+                Log.d("TEST_ROOM_ID", String.valueOf(room.getArea_id()));
+                String table = "scores";
+                String[] columns = {"score"};
+                String selection = "room_id IN (SELECT id FROM rooms WHERE area_id = ? AND name = ?)";
+                String[] selectionArgs = {String.valueOf(room.getArea_id()), room.getName()};
 
-                String rawQuery = "SELECT score FROM scores WHERE room_id = (SELECT id FROM rooms WHERE area_id = ? AND name = ?)";
-                Cursor cursor = db.rawQuery(rawQuery, new String[]{String.valueOf(room.getArea_id()), room.getName()});
-                if (cursor!= null) {
-                    while (cursor.moveToFirst()) {
-                        scoreResults.add(cursor.getInt(0));
+                // Sử dụng query để thực hiện truy vấn
+                try (Cursor cursor = db.query(table, columns, selection, selectionArgs, null, null, null)) {
+                    if (cursor != null && cursor.moveToFirst()) {
+                        do {
+                            scoreResults.add(cursor.getInt(0));
+                            Log.d("NEXT", String.valueOf(cursor.getInt(0)));
+                        } while (cursor.moveToNext());
                     }
                 }
 
                 return (T)scoreResults;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                if (db != null && db.isOpen()) {
+                    db.close();
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(T result) {
+            callback.onTaskComplete(result);
+        }
+    }
+
+    public static class ExecuteGetRoomID<T> extends AsyncTask<Void, Void, T> {
+        private Room room;
+        private DatabaseCallback<T> callback;
+        private Context context;
+
+        public ExecuteGetRoomID(DatabaseCallback<T> callback, Context context, Room room) {
+            this.callback = callback;
+            this.context = context;
+            this.room = room;
+        }
+
+        @Override
+        protected T doInBackground(Void... params) {
+            SQLiteDatabase db = null;
+            Integer result = new Integer(0);
+            try {
+                db = SQLiteDatabase.openDatabase(context.getDatabasePath(DATABASE_NAME).getPath(), null, SQLiteDatabase.OPEN_READWRITE);
+
+                String rawQuery = "SELECT id FROM rooms WHERE area_id = ? AND name = ?";
+                Cursor cursor = db.rawQuery(rawQuery, new String[]{String.valueOf(room.getArea_id()), room.getName()});
+                if (cursor!= null && cursor.moveToFirst()) {
+                    result = cursor.getInt(0);
+                }
+
+                return (T)result;
             } catch (SQLException e) {
                 e.printStackTrace();
             } finally {

@@ -219,5 +219,14 @@
         android:layout_marginTop="16dp"
         android:text="Chấm điểm" />
 
+    <!-- Button để thoat -->
+    <Button
+        android:id="@+id/btnBack"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btnSave"
+        android:layout_marginTop="16dp"
+        android:text="Quay lại" />
+
 </RelativeLayout>
 </ScrollView>

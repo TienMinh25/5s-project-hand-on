@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -36,6 +37,7 @@ public class VanPhongActivity extends AppCompatActivity {
     MyAdapterRecycler adapter;
     Room new_room;
     String fullName = "";
+    String title;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,7 +61,7 @@ public class VanPhongActivity extends AppCompatActivity {
             // Kiểm tra xem "title" có tồn tại trong Bundle không
             if (bundle.containsKey("title")) {
                 // Lấy giá trị của "title" từ Bundle
-                String title = bundle.getString("title");
+                title = bundle.getString("title");
                 txtView.setText(title);
             }
             if (bundle.containsKey("area_id")) {
@@ -154,9 +156,10 @@ public class VanPhongActivity extends AppCompatActivity {
                 Bundle bundle = new Bundle();
                 bundle.putString("nameOfRoom", data.get(position).getName());
                 bundle.putInt("user_id", user_id);
-                bundle.putInt("room_id", position+1);
+                bundle.putString("room_name", data.get(position).getName());
                 bundle.putString("fullname", fullName);
                 bundle.putInt("area_id", area_id);
+                bundle.putString("title", title);
                 i.putExtras(bundle);
 
                 startActivity(i);
@@ -176,6 +179,7 @@ public class VanPhongActivity extends AppCompatActivity {
                 new DatabaseHelper.ExecuteGetRooms<ArrayList<Room>>(new DatabaseCallbackArray<ArrayList<Room>>() {
                     @Override
                     public void onTaskComplete(ArrayList<Room> result) {
+                        Log.d("TEST", String.valueOf(data.size()));
                         data.clear();
                         for (Room i:result) {
                             data.add(i);
@@ -192,14 +196,14 @@ public class VanPhongActivity extends AppCompatActivity {
             }
         });
 
+        service.shutdown();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        getData(new Room(area_id));
-        adapter.notifyDataSetChanged();
         Intent intent = getIntent();
+
         if (intent != null && intent.getExtras() != null) {
             // Lấy Bundle từ Intent
             Bundle bundle = intent.getExtras();
@@ -207,7 +211,7 @@ public class VanPhongActivity extends AppCompatActivity {
             // Kiểm tra xem "title" có tồn tại trong Bundle không
             if (bundle.containsKey("title")) {
                 // Lấy giá trị của "title" từ Bundle
-                String title = bundle.getString("title");
+                title = bundle.getString("title");
                 txtView.setText(title);
             }
             if (bundle.containsKey("area_id")) {
@@ -220,6 +224,8 @@ public class VanPhongActivity extends AppCompatActivity {
                 fullName = bundle.getString("fullname");
             }
         }
+        getData(new Room(area_id));
+        adapter.notifyDataSetChanged();
     }
 
 }

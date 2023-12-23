@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId = "com.tienminh.a5s_project_hand_on"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 33
         versionCode = 1
         versionName = "1.0"
@@ -35,12 +35,6 @@ android {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
 
-    packagingOptions {
-        exclude("org/apache/batik/**")
-        exclude("META-INF/**")
-        exclude("license/**")
-        exclude("org/apache/xmlgraphics/**")
-    }
 }
 
 dependencies {
@@ -50,14 +44,8 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    implementation("org.apache.poi:poi:5.0.0")
-    implementation("org.apache.poi:poi-ooxml:5.0.0")
-    implementation("org.apache.xmlgraphics:batik-all:1.13") {
-        exclude(group = "org.apache.xmlgraphics", module = "batik-svgbrowser:1.13")
-        exclude(group = "org.apache.xmlgraphics", module = "batik-util:1.13")
-        exclude(group = "org.apache.xmlgraphics", module = "batik-xml:1.13")
-    }
-    implementation("org.apache.xmlbeans:xmlbeans:4.0.0")
+    implementation("org.apache.poi:poi:5.2.5")
+    implementation("org.apache.poi:poi-ooxml:5.2.5")
 //    implementation("com.github.BoardiesITSolutions:Android-MySQL-Connector:0.23")
 //    implementation("mysql:mysql-connector-java:8.0.23")
 //    implementation("mysql:mysql-connector-java:5.1.23")
