@@ -2,6 +2,7 @@ package com.tienminh.a5s_project_hand_on.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Spinner;
@@ -108,6 +109,7 @@ public class ChamDiemActivity extends AppCompatActivity {
                                 for (int i = 0; i < diems.size(); i++) {
                                     Score new_score = new Score(room_id, user_id, i+1, diems.get(i));
                                     scores.add(new_score);
+                                    Log.d("TEST_DIEM", String.valueOf(diems.get(i)));
                                 }
                             }
                         });

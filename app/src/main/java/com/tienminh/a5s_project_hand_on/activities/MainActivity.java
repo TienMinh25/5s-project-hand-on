@@ -11,6 +11,11 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.tienminh.a5s_project_hand_on.R;
+import com.tienminh.a5s_project_hand_on.classes.Score;
+import com.tienminh.a5s_project_hand_on.database.DatabaseCallback;
+import com.tienminh.a5s_project_hand_on.database.DatabaseHelper;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     Button btnLogout;
@@ -109,5 +114,6 @@ public class MainActivity extends AppCompatActivity {
         Log.d("TEST", welcomeMessage);
 
         welcomeMessageTextView.setText(welcomeMessage);
+        
     }
 }

@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
-    private static final String DATABASE_NAME = "dbAppAndroid";
+    private static final String DATABASE_NAME = "dbAppAndroid.db";
     private static final int DATABASE_VERSION = 1;
     private static final String INITIALIZE_SCRIPT_NAME = "initialize.sqlite";
 
@@ -408,9 +408,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             try {
                 db = SQLiteDatabase.openDatabase(context.getDatabasePath(DATABASE_NAME).getPath(), null, SQLiteDatabase.OPEN_READWRITE);
 
-                // Bắt đầu một giao dịch để tăng hiệu suất khi thêm nhiều bản ghi
-                db.beginTransaction();
-
                 // Tìm room_id theo area_id và tên phòng trong db rồi mới xây dựng được
                 // Lặp qua danh sách các điểm và chèn từng bản ghi vào bảng
                 for (Score score : scores) {
@@ -425,14 +422,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     long newRowId = db.insert("scores", null, values);
 
                     if (newRowId == -1) {
-                        // Có lỗi khi chèn dữ liệu, hủy giao dịch và thoát
-                        db.endTransaction();
                         return null;
                     }
                 }
 
-                // Giao dịch thành công, đánh dấu là đã thành công
-                db.setTransactionSuccessful();
                 return (T)new Boolean(true);
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -467,8 +460,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             ArrayList<Integer> scoreResults = new ArrayList<>();
             try {
                 db = SQLiteDatabase.openDatabase(context.getDatabasePath(DATABASE_NAME).getPath(), null, SQLiteDatabase.OPEN_READWRITE);
-                Log.d("TEST_NAME", room.getName());
-                Log.d("TEST_ROOM_ID", String.valueOf(room.getArea_id()));
                 String table = "scores";
                 String[] columns = {"score"};
                 String selection = "room_id IN (SELECT id FROM rooms WHERE area_id = ? AND name = ?)";
@@ -479,7 +470,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     if (cursor != null && cursor.moveToFirst()) {
                         do {
                             scoreResults.add(cursor.getInt(0));
-                            Log.d("NEXT", String.valueOf(cursor.getInt(0)));
                         } while (cursor.moveToNext());
                     }
                 }

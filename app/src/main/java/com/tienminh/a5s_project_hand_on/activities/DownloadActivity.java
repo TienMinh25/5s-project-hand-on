@@ -2,6 +2,7 @@ package com.tienminh.a5s_project_hand_on.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -97,11 +98,11 @@ public class DownloadActivity extends AppCompatActivity {
                             @Override
                             public void onTaskComplete(ArrayList<Integer> result) {
                                 if (result != null) {
-                                    Toast.makeText(DownloadActivity.this, "Download failure", Toast.LENGTH_SHORT).show();
-                                }
-                                else {
                                     GenExcel.generateExcel(result);
                                     Toast.makeText(DownloadActivity.this, "Download successful", Toast.LENGTH_SHORT).show();
+                                }
+                                else {
+                                    Toast.makeText(DownloadActivity.this, "Download failure", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         }, DownloadActivity.this, new Room(data.get(position).getName(), area_id)).execute();

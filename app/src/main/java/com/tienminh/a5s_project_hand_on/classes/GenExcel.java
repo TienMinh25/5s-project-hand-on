@@ -1,6 +1,5 @@
 package com.tienminh.a5s_project_hand_on.classes;
 
-import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
 
@@ -18,14 +17,17 @@ public class GenExcel {
     public static void generateExcel(ArrayList<Integer> scores) {
         Integer diemtb = 0;
         ArrayList<Excel> excelList = new ArrayList<>();
-        excelList.add(new Excel(scores.get(0), "Nền sàn", "Có sạch sẽ và được giữ gìn tốt không? Có rác trên sàn không?"));
-        excelList.add(new Excel(scores.get(1), "Thùng rác", "Có sạch sẽ và đặt ở vị trí hợp lý không?"));
-        excelList.add(new Excel(scores.get(2), "Thùng gạt tàn", "Có sạch sẽ và đặt ở vị trí hợp lý không?"));
-        excelList.add(new Excel(scores.get(3), "Tường", "Có sạch sẽ và được giữ gìn tốt không?"));
-        excelList.add(new Excel(scores.get(4), "Cửa sổ", "Có sạch sẽ và được giữ gìn tốt không?"));
-        excelList.add(new Excel(scores.get(5), "Trần", "Có sạch sẽ và được giữ gìn tốt không? Có bụi hoặc mạng nhện không?"));
-        excelList.add(new Excel(scores.get(6), "Đèn", "Có sạch sẽ, an toàn và được bố trí hợp lý không? Còn sử dụng tốt hay không?"));
-        excelList.add(new Excel(scores.get(7), "Góc hành lang", "Có rác hoặc đồ vật nào không cần thiết không?"));
+        Log.d("SIZE_OF_ARRAY", String.valueOf(scores.size()));
+        if (scores.size() != 0) {
+            excelList.add(new Excel(scores.get(0), "Nền sàn", "Có sạch sẽ và được giữ gìn tốt không? Có rác trên sàn không?"));
+            excelList.add(new Excel(scores.get(1), "Thùng rác", "Có sạch sẽ và đặt ở vị trí hợp lý không?"));
+            excelList.add(new Excel(scores.get(2), "Thùng gạt tàn", "Có sạch sẽ và đặt ở vị trí hợp lý không?"));
+            excelList.add(new Excel(scores.get(3), "Tường", "Có sạch sẽ và được giữ gìn tốt không?"));
+            excelList.add(new Excel(scores.get(4), "Cửa sổ", "Có sạch sẽ và được giữ gìn tốt không?"));
+            excelList.add(new Excel(scores.get(5), "Trần", "Có sạch sẽ và được giữ gìn tốt không? Có bụi hoặc mạng nhện không?"));
+            excelList.add(new Excel(scores.get(6), "Đèn", "Có sạch sẽ, an toàn và được bố trí hợp lý không? Còn sử dụng tốt hay không?"));
+            excelList.add(new Excel(scores.get(7), "Góc hành lang", "Có rác hoặc đồ vật nào không cần thiết không?"));
+        }
 
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Sheet1");
@@ -64,7 +66,7 @@ public class GenExcel {
 
         // Save the workbook to a file
         try {
-            File file = createExcelFile("output.xlsx");
+            File file = createExcelFile("/output.xlsx");
             try (FileOutputStream fileOut = new FileOutputStream(file)) {
                 workbook.write(fileOut);
                 Log.d("ExcelGenerator", "Excel file generated successfully: " + file.getAbsolutePath());
