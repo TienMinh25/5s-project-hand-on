@@ -81,6 +81,15 @@ public class ChamDiemActivity extends AppCompatActivity {
                         room_id = result;
                     }
                 }, ChamDiemActivity.this, new Room(room_name, area_id)).execute();
+
+                new DatabaseHelper.ExecuteCheckMarkRoom<Boolean>(new DatabaseCallback<Boolean>() {
+                    @Override
+                    public void onTaskComplete(Boolean result) {
+                        if (result != null && result) {
+                            check = result;
+                        }
+                    }
+                }, ChamDiemActivity.this, room_id).execute();
             }
         });
         service.shutdown();
@@ -112,7 +121,6 @@ public class ChamDiemActivity extends AppCompatActivity {
                                 for (int i = 0; i < diems.size(); i++) {
                                     Score new_score = new Score(room_id, user_id, i+1, diems.get(i));
                                     scores.add(new_score);
-                                    Log.d("TEST_DIEM", String.valueOf(diems.get(i)));
                                 }
                             }
                         });

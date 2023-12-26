@@ -67,7 +67,7 @@ public class GenExcel {
         sheet.addMergedRegion(mergedRegion);
 
         Cell mergedCell = footageRow.createCell(0); // Create cell in the first column of the merged region
-        mergedCell.setCellValue("Điểm: " + String.valueOf(diemtb/8.0));
+        mergedCell.setCellValue("Điểm trung bình: " + String.valueOf(diemtb/8.0));
 
         Row additionRow = sheet.createRow(11);
         CellRangeAddress mergedRegion1 = new CellRangeAddress(11, 11, 0, 7); // From row 10, col 0 to row 10, col 3
