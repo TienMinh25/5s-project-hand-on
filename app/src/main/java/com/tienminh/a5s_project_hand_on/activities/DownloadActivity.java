@@ -2,7 +2,6 @@ package com.tienminh.a5s_project_hand_on.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -34,6 +33,7 @@ public class DownloadActivity extends AppCompatActivity {
     ArrayList<Room> data = new ArrayList<>();
     MyAdapterRecycler adapter;
     String fullName = "";
+    String title = "";
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,7 +56,7 @@ public class DownloadActivity extends AppCompatActivity {
             // Kiểm tra xem "title" có tồn tại trong Bundle không
             if (bundle.containsKey("title")) {
                 // Lấy giá trị của "title" từ Bundle
-                String title = bundle.getString("title");
+                title = bundle.getString("title");
                 txtView.setText(title);
             }
             if (bundle.containsKey("area_id")) {
@@ -98,7 +98,7 @@ public class DownloadActivity extends AppCompatActivity {
                             @Override
                             public void onTaskComplete(ArrayList<Integer> result) {
                                 if (result != null) {
-                                    GenExcel.generateExcel(result);
+                                    GenExcel.generateExcel(result, data.get(position).getName(), title);
                                     Toast.makeText(DownloadActivity.this, "Download successful", Toast.LENGTH_SHORT).show();
                                 }
                                 else {
@@ -139,7 +139,7 @@ public class DownloadActivity extends AppCompatActivity {
                 });
             }
         });
-
+        service.shutdown();
     }
 
     @Override
@@ -155,7 +155,7 @@ public class DownloadActivity extends AppCompatActivity {
             // Kiểm tra xem "title" có tồn tại trong Bundle không
             if (bundle.containsKey("title")) {
                 // Lấy giá trị của "title" từ Bundle
-                String title = bundle.getString("title");
+                title = bundle.getString("title");
                 txtView.setText(title);
             }
             if (bundle.containsKey("area_id")) {

@@ -29,6 +29,8 @@ public class ChamDiemActivity extends AppCompatActivity {
     String room_name;
     String fullName = "";
     String title = "";
+    String nameOfRoomText = "";
+    Boolean check = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,7 +53,7 @@ public class ChamDiemActivity extends AppCompatActivity {
         Bundle bundle = intent.getExtras();
 
         if (bundle != null) {
-            String nameOfRoomText = bundle.getString("nameOfRoom");
+            nameOfRoomText = bundle.getString("nameOfRoom");
             nameOfRoom.setText(nameOfRoomText);
             if (bundle.containsKey("user_id")) {
                 user_id = bundle.getInt("user_id");
@@ -78,9 +80,10 @@ public class ChamDiemActivity extends AppCompatActivity {
                     public void onTaskComplete(Integer result) {
                         room_id = result;
                     }
-                }, ChamDiemActivity.this, new Room(room_name, area_id));
+                }, ChamDiemActivity.this, new Room(room_name, area_id)).execute();
             }
         });
+        service.shutdown();
 
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -124,7 +127,7 @@ public class ChamDiemActivity extends AppCompatActivity {
                                     Toast.makeText(ChamDiemActivity.this, "Chấm điểm không thành công, vui lòng thử lại",Toast.LENGTH_SHORT).show();
                                 }
                             }
-                        }, ChamDiemActivity.this, scores).execute();
+                        }, ChamDiemActivity.this, scores, check).execute();
                     }
                 });
                 service.shutdown();
@@ -168,7 +171,7 @@ public class ChamDiemActivity extends AppCompatActivity {
         Bundle bundle = intent.getExtras();
 
         if (bundle != null) {
-            String nameOfRoomText = bundle.getString("nameOfRoom");
+            nameOfRoomText = bundle.getString("nameOfRoom");
             nameOfRoom.setText(nameOfRoomText);
             if (bundle.containsKey("user_id")) {
                 user_id = bundle.getInt("user_id");
@@ -186,5 +189,18 @@ public class ChamDiemActivity extends AppCompatActivity {
                 title = bundle.getString("title");
             }
         }
+
+        ExecutorService service = Executors.newSingleThreadExecutor();
+        service.execute(new Runnable() {
+            @Override
+            public void run() {
+                new DatabaseHelper.ExecuteGetRoomID<Integer>(new DatabaseCallback<Integer>() {
+                    @Override
+                    public void onTaskComplete(Integer result) {
+                        room_id = result;
+                    }
+                }, ChamDiemActivity.this, new Room(room_name, area_id)).execute();
+            }
+        });
     }
 }

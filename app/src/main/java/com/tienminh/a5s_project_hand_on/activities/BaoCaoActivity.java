@@ -49,6 +49,7 @@ public class BaoCaoActivity extends AppCompatActivity {
                 bundle.putInt("user_id", user_id);
                 bundle.putInt("area_id", 1);
                 bundle.putString("fullname", fullName);
+                bundle.putString("name_of_area", "KHU VỰC VĂN PHÒNG");
                 intent.putExtras(bundle);
                 startActivity(intent);
             }
@@ -63,6 +64,7 @@ public class BaoCaoActivity extends AppCompatActivity {
                 bundle.putInt("area_id", 2);
                 bundle.putInt("user_id", user_id);
                 bundle.putString("fullname", fullName);
+                bundle.putString("name_of_area", "KHU VỰC GIẢNG ĐƯỜNG");
                 intent.putExtras(bundle);
                 startActivity(intent);
             }
@@ -77,6 +79,7 @@ public class BaoCaoActivity extends AppCompatActivity {
                 bundle.putInt("area_id", 3);
                 bundle.putInt("user_id", user_id);
                 bundle.putString("fullname", fullName);
+                bundle.putString("name_of_area", "KHU VỰC PHÒNG THỰC HÀNH");
                 intent.putExtras(bundle);
                 startActivity(intent);
             }
@@ -91,6 +94,7 @@ public class BaoCaoActivity extends AppCompatActivity {
                 bundle.putInt("area_id", 4);
                 bundle.putInt("user_id", user_id);
                 bundle.putString("fullname", fullName);
+                bundle.putString("name_of_area", "KHU VỰC CHUNG");
                 intent.putExtras(bundle);
                 startActivity(intent);
             }
