@@ -33,6 +33,7 @@ public class DownloadActivity extends AppCompatActivity {
     ArrayList<Room> data = new ArrayList<>();
     MyAdapterRecycler adapter;
     String fullName = "";
+    String title = "";
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,7 +56,7 @@ public class DownloadActivity extends AppCompatActivity {
             // Kiểm tra xem "title" có tồn tại trong Bundle không
             if (bundle.containsKey("title")) {
                 // Lấy giá trị của "title" từ Bundle
-                String title = bundle.getString("title");
+                title = bundle.getString("title");
                 txtView.setText(title);
             }
             if (bundle.containsKey("area_id")) {
@@ -97,11 +98,11 @@ public class DownloadActivity extends AppCompatActivity {
                             @Override
                             public void onTaskComplete(ArrayList<Integer> result) {
                                 if (result != null) {
-                                    Toast.makeText(DownloadActivity.this, "Download failure", Toast.LENGTH_SHORT).show();
+                                    GenExcel.generateExcel(result, data.get(position).getName(), title);
+                                    Toast.makeText(DownloadActivity.this, "Download successful", Toast.LENGTH_SHORT).show();
                                 }
                                 else {
-                                    GenExcel.generateExcel(result);
-                                    Toast.makeText(DownloadActivity.this, "Download successful", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(DownloadActivity.this, "Download failure", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         }, DownloadActivity.this, new Room(data.get(position).getName(), area_id)).execute();
@@ -138,7 +139,7 @@ public class DownloadActivity extends AppCompatActivity {
                 });
             }
         });
-
+        service.shutdown();
     }
 
     @Override
@@ -154,7 +155,7 @@ public class DownloadActivity extends AppCompatActivity {
             // Kiểm tra xem "title" có tồn tại trong Bundle không
             if (bundle.containsKey("title")) {
                 // Lấy giá trị của "title" từ Bundle
-                String title = bundle.getString("title");
+                title = bundle.getString("title");
                 txtView.setText(title);
             }
             if (bundle.containsKey("area_id")) {

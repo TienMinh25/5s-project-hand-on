@@ -10,15 +10,19 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.tienminh.a5s_project_hand_on.R;
+import com.tienminh.a5s_project_hand_on.activities.DownloadActivity;
 import com.tienminh.a5s_project_hand_on.classes.Room;
 import com.tienminh.a5s_project_hand_on.classes.Score;
 import com.tienminh.a5s_project_hand_on.classes.User;
 
 import java.util.ArrayList;
 import java.util.Vector;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
-    private static final String DATABASE_NAME = "dbAppAndroid";
+    private static Boolean check = false;
+    private static final String DATABASE_NAME = "dbAppAndroid.db";
     private static final int DATABASE_VERSION = 1;
     private static final String INITIALIZE_SCRIPT_NAME = "initialize.sqlite";
 
@@ -395,11 +399,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         private ArrayList<Score> scores;
         private DatabaseCallback<T> callback;
         private Context context;
+        private Boolean check;
 
-        public ExecuteMark(DatabaseCallback<T> callback, Context context, ArrayList<Score> scores) {
+        public ExecuteMark(DatabaseCallback<T> callback, Context context, ArrayList<Score> scores, Boolean check) {
             this.callback = callback;
             this.context = context;
             this.scores = scores;
+            this.check = check;
         }
 
         @Override
@@ -408,11 +414,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             try {
                 db = SQLiteDatabase.openDatabase(context.getDatabasePath(DATABASE_NAME).getPath(), null, SQLiteDatabase.OPEN_READWRITE);
 
-                // Bắt đầu một giao dịch để tăng hiệu suất khi thêm nhiều bản ghi
-                db.beginTransaction();
+                // kiểm tra xem đã có room_id trong scores chưa, nếu có rồi thì dùng update, chưa có thì dùng insert
 
                 // Tìm room_id theo area_id và tên phòng trong db rồi mới xây dựng được
                 // Lặp qua danh sách các điểm và chèn từng bản ghi vào bảng
+
                 for (Score score : scores) {
                     // Tạo ContentValues để chứa dữ liệu muốn chèn
                     ContentValues values = new ContentValues();
@@ -421,18 +427,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     values.put("description_id", score.getDescription_id());
                     values.put("score", score.getScore());
 
-                    // Chèn dữ liệu vào bảng 'rooms'
-                    long newRowId = db.insert("scores", null, values);
-
-                    if (newRowId == -1) {
-                        // Có lỗi khi chèn dữ liệu, hủy giao dịch và thoát
-                        db.endTransaction();
-                        return null;
+                    // Kiểm tra xem đã có room_id trong bảng scores chưa
+                    if (check) {
+                        // Nếu đã tồn tại, thì update
+                        int affectedRows = db.update("scores", values, "room_id=? AND description_id=?", new String[]{String.valueOf(score.getRoom_id()), String.valueOf(score.getDescription_id())});
+                        Log.d("RowEffect update", "Rows affected: " + affectedRows);
+                        if (affectedRows == 0) {
+                            // Xử lý lỗi nếu không có bản ghi nào được cập nhật
+                            return null;
+                        }
+                    } else {
+                        // Nếu chưa tồn tại, thì insert
+                        long newRowId = db.insert("scores", null, values);
+                        Log.d("RowEffect Insert", String.valueOf(newRowId));
+                        if (newRowId == -1) {
+                            // Xử lý lỗi nếu không thể chèn hoặc xảy ra lỗi
+                            return null;
+                        }
                     }
                 }
 
-                // Giao dịch thành công, đánh dấu là đã thành công
-                db.setTransactionSuccessful();
                 return (T)new Boolean(true);
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -467,8 +481,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             ArrayList<Integer> scoreResults = new ArrayList<>();
             try {
                 db = SQLiteDatabase.openDatabase(context.getDatabasePath(DATABASE_NAME).getPath(), null, SQLiteDatabase.OPEN_READWRITE);
-                Log.d("TEST_NAME", room.getName());
-                Log.d("TEST_ROOM_ID", String.valueOf(room.getArea_id()));
                 String table = "scores";
                 String[] columns = {"score"};
                 String selection = "room_id IN (SELECT id FROM rooms WHERE area_id = ? AND name = ?)";
@@ -479,7 +491,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     if (cursor != null && cursor.moveToFirst()) {
                         do {
                             scoreResults.add(cursor.getInt(0));
-                            Log.d("NEXT", String.valueOf(cursor.getInt(0)));
                         } while (cursor.moveToNext());
                     }
                 }
@@ -515,7 +526,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         @Override
         protected T doInBackground(Void... params) {
             SQLiteDatabase db = null;
-            Integer result = new Integer(0);
+            Integer result = new Integer(-1);
             try {
                 db = SQLiteDatabase.openDatabase(context.getDatabasePath(DATABASE_NAME).getPath(), null, SQLiteDatabase.OPEN_READWRITE);
 
@@ -526,6 +537,45 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 }
 
                 return (T)result;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                if (db != null && db.isOpen()) {
+                    db.close();
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(T result) {
+            callback.onTaskComplete(result);
+        }
+    }
+
+    public static class ExecuteCheckMarkRoom<T> extends AsyncTask<Void, Void, T> {
+        private Integer room_id;
+        private DatabaseCallback<T> callback;
+        private Context context;
+
+        public ExecuteCheckMarkRoom(DatabaseCallback<T> callback, Context context, Integer room_id) {
+            this.callback = callback;
+            this.context = context;
+            this.room_id = room_id;
+        }
+
+        @Override
+        protected T doInBackground(Void... params) {
+            SQLiteDatabase db = null;
+            try {
+                db = SQLiteDatabase.openDatabase(context.getDatabasePath(DATABASE_NAME).getPath(), null, SQLiteDatabase.OPEN_READWRITE);
+
+                String rawQuery = "SELECT id FROM scores WHERE room_id=?";
+                Cursor cursor = db.rawQuery(rawQuery, new String[]{String.valueOf(room_id)});
+                if (cursor!= null && cursor.moveToFirst()) {
+                    return (T)new Boolean(true);
+                }
+
             } catch (SQLException e) {
                 e.printStackTrace();
             } finally {
